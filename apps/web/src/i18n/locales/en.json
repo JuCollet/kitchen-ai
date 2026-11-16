@@ -50,5 +50,14 @@
     "accept": "Join the household",
     "notFound": "This invitation is invalid, already used or expired.",
     "alreadyInHousehold": "You already belong to a household."
+  },
+  "consent": {
+    "title": "Connect an AI",
+    "intro": "{{client}} asks to access your Kitchen household: profiles, appliances, recipes, menus, shopping lists and pantry. It will be able to read and change them on your behalf.",
+    "destination": "Access will be given to:",
+    "warning": "Only continue if you are adding Kitchen to this AI yourself, right now.",
+    "allow": "Allow",
+    "deny": "Deny",
+    "notFound": "This connection request is invalid or has expired. Start again from your AI."
   }
 }

@@ -27,6 +27,17 @@ spring:
     open-in-view: false
   flyway:
     locations: classpath:db/migration
+  ai:
+    mcp:
+      server:
+        # Stateless Streamable HTTP: every request carries its token, any instance can answer it.
+        protocol: STATELESS
+        name: kitchen
+        version: 0.4.0
+        # Placeholder until phase 6 writes the real instructions (mcp/instructions.md).
+        instructions: >-
+          Kitchen is the household's cooking memory (recipes, menus, shopping lists).
+          Use the ping tool to check the connection.
   threads:
     virtual:
       enabled: true
@@ -34,6 +45,13 @@ spring:
 kitchen:
   # URL opened in the browser. Locally: the Vite dev server, which proxies the API.
   public-url: ${KITCHEN_PUBLIC_URL:http://localhost:5173}
+  oauth:
+    # RSA private key (PKCS#8 PEM) signing the AI clients' access tokens. Secret. Empty locally:
+    # a temporary key is generated at startup.
+    signing-key: ${KITCHEN_OAUTH_SIGNING_KEY:}
+  mcp:
+    # Browser origins allowed on /mcp besides the site itself (MCP Inspector in development).
+    allowed-origins: ${KITCHEN_MCP_ALLOWED_ORIGINS:http://localhost:6274,http://127.0.0.1:6274}
 
 server:
   # Trust X-Forwarded-Host/Proto: the API is only reachable through a proxy that sets them

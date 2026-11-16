@@ -28,12 +28,18 @@ export async function registerPasskey(label: string): Promise<void> {
   })
 }
 
-/** Signs in with a passkey already registered on this device or in a password manager. */
-export async function signInWithPasskey(): Promise<void> {
+const signInResultSchema = z.object({ redirectUrl: z.string().optional() })
+
+/**
+ * Signs in with a passkey already registered on this device or in a password manager. Returns
+ * where to go next: the AI authorization request that needed a sign-in, if any.
+ */
+export async function signInWithPasskey(): Promise<string | undefined> {
   const options = await request('POST', '/webauthn/authenticate/options', anyJson)
   const publicKey = PublicKeyCredential.parseRequestOptionsFromJSON(
     options as PublicKeyCredentialRequestOptionsJSON,
   )
   const credential = (await navigator.credentials.get({ publicKey })) as PublicKeyCredential
-  await request('POST', '/login/webauthn', anyJson, credential.toJSON())
+  const result = await request('POST', '/login/webauthn', signInResultSchema, credential.toJSON())
+  return result.redirectUrl
 }

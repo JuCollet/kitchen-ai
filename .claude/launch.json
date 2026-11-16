@@ -4,10 +4,7 @@
     {
       "name": "api",
       "runtimeExecutable": "sh",
-      "runtimeArgs": [
-        "-c",
-        "cd apps/api && ./mvnw -B -q spring-boot:run"
-      ],
+      "runtimeArgs": ["-c", "cd apps/api && ./mvnw -B -q spring-boot:run"],
       "port": 8080
     },
     {

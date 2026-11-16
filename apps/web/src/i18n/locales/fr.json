@@ -50,5 +50,14 @@
     "accept": "Rejoindre le foyer",
     "notFound": "Cette invitation est invalide, déjà utilisée ou expirée.",
     "alreadyInHousehold": "Tu fais déjà partie d'un foyer."
+  },
+  "consent": {
+    "title": "Connecter une IA",
+    "intro": "{{client}} demande l'accès à ton foyer Kitchen : profils, appareils, recettes, menus, listes de courses et garde-manger. Elle pourra les lire et les modifier en ton nom.",
+    "destination": "L'accès sera donné à :",
+    "warning": "Continue uniquement si c'est toi qui ajoutes Kitchen à cette IA, maintenant.",
+    "allow": "Autoriser",
+    "deny": "Refuser",
+    "notFound": "Cette demande de connexion est invalide ou a expiré. Recommence depuis ton IA."
   }
 }
