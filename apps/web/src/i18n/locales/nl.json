@@ -1,6 +1,63 @@
 {
+  "common": {
+    "loading": "Laden…",
+    "error": "Er ging iets mis. Probeer het opnieuw."
+  },
+  "validation": {
+    "required": "Verplicht",
+    "tooLong": "Te lang"
+  },
   "home": {
     "tagline": "Je receptenboek en kookgeschiedenis, nauwkeurig en blijvend, gedeeld met je huishouden, bruikbaar vanuit elke AI.",
     "start": "Aan de slag"
+  },
+  "signIn": {
+    "title": "Aanmelden",
+    "intro": "Je Kitchen-account wordt aangemaakt met Google. Daarna kun je een passkey toevoegen om je zonder Google aan te melden.",
+    "google": "Doorgaan met Google",
+    "passkey": "Aanmelden met een passkey",
+    "failed": "Aanmelden is mislukt. Probeer het opnieuw.",
+    "passkeyFailed": "Aanmelden met een passkey is mislukt."
+  },
+  "account": {
+    "title": "Mijn account",
+    "signedInAs": "Aangemeld als {{name}} ({{email}})",
+    "signOut": "Afmelden",
+    "noHousehold": "Je hoort nog bij geen enkel huishouden. Maak er een aan, of vraag een lid om een uitnodigingslink.",
+    "householdName": "Naam van het huishouden",
+    "createHousehold": "Huishouden aanmaken",
+    "household": "Huishouden: {{name}}",
+    "members": "Leden",
+    "roles": {
+      "owner": "eigenaar",
+      "member": "lid"
+    },
+    "invite": "Iemand uitnodigen",
+    "inviteLink": "Stuur deze link naar de persoon die je uitnodigt. Hij werkt één keer, tot {{date}}.",
+    "copy": "Kopiëren",
+    "copied": "Gekopieerd",
+    "passkeyTitle": "Passkey",
+    "passkeyIntro": "Met een passkey meld je je op dit toestel aan zonder Google.",
+    "addPasskey": "Passkey toevoegen",
+    "passkeyAdded": "Passkey toegevoegd. Je kunt je er nu mee aanmelden.",
+    "passkeyUnsupported": "Deze browser ondersteunt geen passkeys.",
+    "passkeyFailed": "De passkey kon niet worden toegevoegd."
+  },
+  "join": {
+    "title": "Lid worden van een huishouden",
+    "intro": "Je bent uitgenodigd om lid te worden van een huishouden op Kitchen.",
+    "signInFirst": "Aanmelden om te aanvaarden",
+    "accept": "Lid worden",
+    "notFound": "Deze uitnodiging is ongeldig, al gebruikt of verlopen.",
+    "alreadyInHousehold": "Je hoort al bij een huishouden."
+  },
+  "consent": {
+    "title": "Een AI verbinden",
+    "intro": "{{client}} vraagt toegang tot je Kitchen-huishouden: profielen, toestellen, recepten, menu's, boodschappenlijsten en voorraadkast. Het kan ze in jouw naam lezen en wijzigen.",
+    "destination": "Toegang wordt gegeven aan:",
+    "warning": "Ga alleen verder als jij Kitchen nu zelf aan deze AI toevoegt.",
+    "allow": "Toestaan",
+    "deny": "Weigeren",
+    "notFound": "Dit verbindingsverzoek is ongeldig of verlopen. Begin opnieuw vanuit je AI."
   }
 }

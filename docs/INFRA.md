@@ -59,7 +59,7 @@ The machine is indirectly exposed to the internet: if it were compromised, it mu
   - `gotenberg` → **no internet egress** (it only needs the HTML we send it);
   - ingress only from Traefik;
   - no access between namespaces of different projects.
-- **Secrets: Sealed Secrets.** Secrets (Google client, OAuth signing keys, Postgres passwords, B2 key) are encrypted with `kubeseal` and versioned as `SealedSecret`s: an application's in its own `deploy/k8s` (for example `kitchen-ai/deploy/k8s`), the cluster's (Postgres, B2, cloudflared) in `homelab`. Only the cluster controller can decrypt them, and ArgoCD applies them like any other manifest, without a plugin.
+- **Secrets: Sealed Secrets.** Secrets (Google client, OAuth signing key `KITCHEN_OAUTH_SIGNING_KEY` generated with `openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:3072`, Postgres passwords, B2 key) are encrypted with `kubeseal` and versioned as `SealedSecret`s: an application's in its own `deploy/k8s` (for example `kitchen-ai/deploy/k8s`), the cluster's (Postgres, B2, cloudflared) in `homelab`. Only the cluster controller can decrypt them, and ArgoCD applies them like any other manifest, without a plugin.
   - **The controller's private key must be backed up outside the cluster** (password manager): without it, reinstalling the cluster makes every secret unreadable.
   - Rotation: after a leak, change the secret at the source (Google, B2…) then reseal; resealing alone is not enough, the old ciphertext stays in Git history.
   - Never a plaintext secret in Git, in a CI variable or in a committed `.env` file.
@@ -74,7 +74,7 @@ The machine is indirectly exposed to the internet: if it were compromised, it mu
 
 - `liveness` and `readiness` probes on `/actuator/health/liveness` and `/actuator/health/readiness` for the API (enabled since phase 1).
 - Non-root containers, read-only file system, capabilities dropped, `allowPrivilegeEscalation: false`.
-- Ingress: `/mcp`, `/oauth2`, `/.well-known`, `/api`, `/login`, `/exports`, `/actuator/health` → `api`; everything else → `web`. Only `/actuator/health` is routed (for the external probe): the other Actuator endpoints are never exposed (and the API only exposes `health` anyway).
+- Ingress: `/mcp`, `/oauth2`, `/.well-known`, `/api`, `/login`, `/logout`, `/webauthn`, `/exports`, `/actuator/health` → `api`; everything else → `web`. Only `/actuator/health` is routed (for the external probe): the other Actuator endpoints are never exposed (and the API only exposes `health` anyway).
 
 ## 6. PostgreSQL
 

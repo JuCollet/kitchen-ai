@@ -75,4 +75,13 @@ public class HouseholdInvitation implements HouseholdScoped {
     public UUID getUsedBy() {
         return usedBy;
     }
+
+    public boolean isUsableAt(Instant now) {
+        return usedAt == null && now.isBefore(expiresAt);
+    }
+
+    public void markUsed(UUID userId, Instant now) {
+        this.usedBy = userId;
+        this.usedAt = now;
+    }
 }
