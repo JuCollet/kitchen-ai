@@ -28,4 +28,4 @@ Checks: `./mvnw verify` in `apps/api`; `pnpm lint`, `pnpm test`, `pnpm build` at
 
 ## Status
 
-Framing done (16 November 2026). Phases 1 (monorepo skeleton) and 2 (data model, isolation) done. Phase 3 (sign-in, households, invitations) implemented and tested automatically; the manual check with a real Google client (two accounts joining the same household) is pending.
+Framing done (16 November 2026). Phases 1 (monorepo skeleton), 2 (data model, isolation) and 3 (sign-in, households, invitations) done; phase 3 checked manually with a real Google client (two accounts joined the same household, passkey sign-in). Next step: phase 4, OAuth server and minimal MCP.
