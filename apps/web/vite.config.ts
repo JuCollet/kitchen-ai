@@ -14,10 +14,15 @@ export default defineConfig({
   server: {
     // Same-origin in development, like in production (single domain, routed by path):
     // no CORS, the session cookie just works.
-    proxy: {
-      '/api': 'http://localhost:8080',
-      '/actuator/health': 'http://localhost:8080',
-    },
+    // The API sees the browser's host through X-Forwarded-* headers (xfwd), so Spring builds
+    // its URLs (Google redirect URI, passkey origin) on http://localhost:5173, like behind
+    // Traefik in production.
+    proxy: Object.fromEntries(
+      ['/api', '/actuator/health', '/oauth2', '/login', '/logout', '/webauthn'].map((path) => [
+        path,
+        { target: 'http://localhost:8080', xfwd: true },
+      ]),
+    ),
   },
   test: {
     environment: 'jsdom',

@@ -15,6 +15,7 @@ import com.tngtech.archunit.lang.ArchRule;
 import com.tngtech.archunit.lang.ConditionEvents;
 import com.tngtech.archunit.lang.SimpleConditionEvent;
 import dev.julco.kitchen.common.HouseholdScoped;
+import dev.julco.kitchen.common.UnscopedQuery;
 import dev.julco.kitchen.household.HouseholdRepository;
 import dev.julco.kitchen.user.AppUserRepository;
 import java.util.Optional;
@@ -56,7 +57,10 @@ class ArchitectureTest {
             .orShould().beAssignableTo(ListPagingAndSortingRepository.class)
             .because("generic CRUD methods bypass the household filter (CLAUDE.md rule 1)");
 
-    /** Rule 1: every read or delete of household data is filtered by household or user id. */
+    /**
+     * Rule 1: every read or delete of household data is filtered by household or user id, unless
+     * the method is explicitly marked {@link UnscopedQuery} with a justification.
+     */
     @ArchTest
     static final ArchRule household_scoped_repositories_filter_every_query = classes()
             .that().areAssignableTo(Repository.class)
@@ -94,7 +98,8 @@ class ArchitectureTest {
                 for (JavaMethod method : repository.getMethods()) {
                     String name = method.getName();
                     boolean filtered = name.contains("HouseholdId") || name.contains("UserId");
-                    if (!name.equals("save") && !filtered) {
+                    boolean explicitException = method.isAnnotatedWith(UnscopedQuery.class);
+                    if (!name.equals("save") && !filtered && !explicitException) {
                         events.add(SimpleConditionEvent.violated(method, method.getFullName()
                                 + " reads household data without filtering by householdId or userId"));
                     }

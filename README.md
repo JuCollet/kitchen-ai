@@ -22,8 +22,10 @@ cd apps/api && ./mvnw spring-boot:run   # API on :8080, starts PostgreSQL with D
 pnpm install && pnpm dev                # site on :5173
 ```
 
+Google sign-in needs a Google OAuth client: copy `apps/api/.env.example` to `apps/api/.env` and fill it in. Open the site on http://localhost:5173 (the Vite dev server proxies the API).
+
 Checks: `./mvnw verify` in `apps/api`; `pnpm lint`, `pnpm test`, `pnpm build` at the root.
 
 ## Status
 
-Framing done (16 November 2026). Phase 1 (monorepo skeleton) and phase 2 (data model, isolation) done. Next step: phase 3, sign-in and households.
+Framing done (16 November 2026). Phases 1 (monorepo skeleton) and 2 (data model, isolation) done. Phase 3 (sign-in, households, invitations) implemented and tested automatically; the manual check with a real Google client (two accounts joining the same household) is pending.

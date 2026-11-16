@@ -21,13 +21,13 @@ Kitchen (kitchen.julco.dev) is a cooking assistant **with no chat interface of i
 ## Goals and audience
 
 - **Two goals, equally important**: learn a production-grade backend and infrastructure stack (Java, Spring, Postgres, OAuth, k3s, GitOps) **and** ship a product that is actually used.
-- **v1 audience**: Julien's household and friends, **by invitation**. Opening to the public later.
+- **v1 audience**: Julien's household and friends. Sign-up is not restricted (decision of 16 November 2026, phase 3): anyone with a Google account can create a household, the service is simply not advertised. Joining an existing household always requires an invitation from one of its members.
 - **AI clients**: any MCP-compatible client, with Claude and ChatGPT tested first.
 - **Languages**: French, Dutch, English (site, instructions, PDF, widget). Recipes stay in the language they were written in.
 
 ## Households and people
 
-- **Each person has their own account** (Google sign-in or passkey) and connects their own AI.
+- **Each person has their own account** and connects their own AI. The account is created at the first Google sign-in; the person can then add passkeys to sign in without Google (Spring Security only registers a passkey for a signed-in person, and a custom passkey-only sign-up flow is not worth its security cost in v1).
 - **Data lives at the household level**: recipes, appliances, menus, shopping lists, pantry.
 - **What stays personal**: recipe ratings, dietary constraints (diet, allergies, dislikes), language. A household menu respects the **union** of its members' constraints and favours recipes everyone likes.
 - **A person belongs to a single household** in v1. People join a household by **invitation** (single-use link or code, sent by a member).
@@ -76,7 +76,7 @@ Kitchen (kitchen.julco.dev) is a cooking assistant **with no chat interface of i
 - Reminders and notifications (the AI never takes the initiative; we observe whether usage holds without them)
 - Appliance catalogue shared between households (could emerge from validated sheets)
 - Several households per person
-- Opening to the public, listing in connector directories
+- Public launch (communication, listing in connector directories)
 - Web interface to browse recipes or menus (that is the AI's job)
 
 ## Known risks

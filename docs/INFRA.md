@@ -74,7 +74,7 @@ The machine is indirectly exposed to the internet: if it were compromised, it mu
 
 - `liveness` and `readiness` probes on `/actuator/health/liveness` and `/actuator/health/readiness` for the API (enabled since phase 1).
 - Non-root containers, read-only file system, capabilities dropped, `allowPrivilegeEscalation: false`.
-- Ingress: `/mcp`, `/oauth2`, `/.well-known`, `/api`, `/login`, `/exports`, `/actuator/health` → `api`; everything else → `web`. Only `/actuator/health` is routed (for the external probe): the other Actuator endpoints are never exposed (and the API only exposes `health` anyway).
+- Ingress: `/mcp`, `/oauth2`, `/.well-known`, `/api`, `/login`, `/logout`, `/webauthn`, `/exports`, `/actuator/health` → `api`; everything else → `web`. Only `/actuator/health` is routed (for the external probe): the other Actuator endpoints are never exposed (and the API only exposes `health` anyway).
 
 ## 6. PostgreSQL
 

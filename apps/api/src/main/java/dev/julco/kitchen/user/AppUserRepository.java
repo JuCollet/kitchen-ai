@@ -13,4 +13,6 @@ public interface AppUserRepository extends Repository<AppUser, UUID> {
     AppUser save(AppUser user);
 
     Optional<AppUser> findById(UUID userId);
+
+    boolean existsByEmailIgnoreCase(String email);
 }

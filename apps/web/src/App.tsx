@@ -1,14 +1,24 @@
-import { useTranslation } from 'react-i18next'
-import { Button } from '@/components/ui/button'
+import { BrowserRouter, Route, Routes } from 'react-router'
+import { AccountPage } from '@/pages/AccountPage'
+import { HomePage } from '@/pages/HomePage'
+import { JoinPage } from '@/pages/JoinPage'
+import { SignInPage } from '@/pages/SignInPage'
+
+export function AppRoutes() {
+  return (
+    <Routes>
+      <Route path="/sign-in" element={<SignInPage />} />
+      <Route path="/account" element={<AccountPage />} />
+      <Route path="/join" element={<JoinPage />} />
+      <Route path="*" element={<HomePage />} />
+    </Routes>
+  )
+}
 
 export function App() {
-  const { t } = useTranslation()
-
   return (
-    <main className="mx-auto flex min-h-svh max-w-xl flex-col items-center justify-center gap-6 p-6 text-center">
-      <h1 className="text-4xl font-semibold tracking-tight">Kitchen</h1>
-      <p className="text-muted-foreground">{t('home.tagline')}</p>
-      <Button>{t('home.start')}</Button>
-    </main>
+    <BrowserRouter>
+      <AppRoutes />
+    </BrowserRouter>
   )
 }

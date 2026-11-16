@@ -1,6 +1,54 @@
 {
+  "common": {
+    "loading": "Chargement…",
+    "error": "Une erreur est survenue. Réessaie."
+  },
+  "validation": {
+    "required": "Obligatoire",
+    "tooLong": "Trop long"
+  },
   "home": {
     "tagline": "Ton livre de recettes et ton historique culinaire, précis et permanents, partagés avec ton foyer, utilisables depuis n'importe quelle IA.",
     "start": "Commencer"
+  },
+  "signIn": {
+    "title": "Connexion",
+    "intro": "Ton compte Kitchen se crée avec Google. Tu pourras ensuite ajouter une passkey pour te connecter sans Google.",
+    "google": "Continuer avec Google",
+    "passkey": "Se connecter avec une passkey",
+    "failed": "La connexion a échoué. Réessaie.",
+    "passkeyFailed": "La connexion par passkey a échoué."
+  },
+  "account": {
+    "title": "Mon compte",
+    "signedInAs": "Connecté en tant que {{name}} ({{email}})",
+    "signOut": "Se déconnecter",
+    "noHousehold": "Tu ne fais encore partie d'aucun foyer. Crées-en un, ou demande un lien d'invitation à un membre.",
+    "householdName": "Nom du foyer",
+    "createHousehold": "Créer le foyer",
+    "household": "Foyer : {{name}}",
+    "members": "Membres",
+    "roles": {
+      "owner": "propriétaire",
+      "member": "membre"
+    },
+    "invite": "Inviter quelqu'un",
+    "inviteLink": "Envoie ce lien à la personne que tu invites. Il fonctionne une seule fois, jusqu'au {{date}}.",
+    "copy": "Copier",
+    "copied": "Copié",
+    "passkeyTitle": "Passkey",
+    "passkeyIntro": "Une passkey te permet de te connecter sur cet appareil sans Google.",
+    "addPasskey": "Ajouter une passkey",
+    "passkeyAdded": "Passkey ajoutée. Tu peux maintenant te connecter avec.",
+    "passkeyUnsupported": "Ce navigateur ne gère pas les passkeys.",
+    "passkeyFailed": "La passkey n'a pas pu être ajoutée."
+  },
+  "join": {
+    "title": "Rejoindre un foyer",
+    "intro": "Tu as été invité à rejoindre un foyer sur Kitchen.",
+    "signInFirst": "Se connecter pour accepter",
+    "accept": "Rejoindre le foyer",
+    "notFound": "Cette invitation est invalide, déjà utilisée ou expirée.",
+    "alreadyInHousehold": "Tu fais déjà partie d'un foyer."
   }
 }

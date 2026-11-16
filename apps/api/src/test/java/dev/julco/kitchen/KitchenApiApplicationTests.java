@@ -50,9 +50,26 @@ class KitchenApiApplicationTests {
     @Test
     void otherActuatorEndpointsAreNotExposed() {
         for (var endpoint : new String[] {"env", "beans", "heapdump", "configprops", "mappings"}) {
-            assertThat(get("/actuator/" + endpoint).getStatusCode())
+            // 401 without a session; never exposed, even with one.
+            assertThat(get("/actuator/" + endpoint).getStatusCode().is4xxClientError())
                     .as(endpoint)
-                    .isEqualTo(HttpStatus.NOT_FOUND);
+                    .isTrue();
         }
+    }
+
+    /** Real HTTP request: the site reads this cookie and sends it back in the X-XSRF-TOKEN header. */
+    @Test
+    void csrfCookieIsReadableByTheSite() {
+        var response = get("/api/csrf");
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+        assertThat(response.getHeaders().get("Set-Cookie"))
+                .singleElement()
+                .satisfies(cookie -> assertThat(cookie).startsWith("XSRF-TOKEN=").doesNotContainIgnoringCase("HttpOnly"));
+    }
+
+    @Test
+    void apiCallsWithoutSessionAreRejected() {
+        assertThat(get("/api/me").getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     }
 }

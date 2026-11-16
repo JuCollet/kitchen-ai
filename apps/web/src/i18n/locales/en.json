@@ -1,6 +1,54 @@
 {
+  "common": {
+    "loading": "Loading…",
+    "error": "Something went wrong. Please try again."
+  },
+  "validation": {
+    "required": "Required",
+    "tooLong": "Too long"
+  },
   "home": {
     "tagline": "Your recipe book and cooking history, precise and permanent, shared with your household, usable from any AI.",
     "start": "Get started"
+  },
+  "signIn": {
+    "title": "Sign in",
+    "intro": "Your Kitchen account is created with Google. You can then add a passkey to sign in without Google.",
+    "google": "Continue with Google",
+    "passkey": "Sign in with a passkey",
+    "failed": "Sign-in failed. Please try again.",
+    "passkeyFailed": "Passkey sign-in failed."
+  },
+  "account": {
+    "title": "My account",
+    "signedInAs": "Signed in as {{name}} ({{email}})",
+    "signOut": "Sign out",
+    "noHousehold": "You do not belong to a household yet. Create one, or ask a member for an invitation link.",
+    "householdName": "Household name",
+    "createHousehold": "Create the household",
+    "household": "Household: {{name}}",
+    "members": "Members",
+    "roles": {
+      "owner": "owner",
+      "member": "member"
+    },
+    "invite": "Invite someone",
+    "inviteLink": "Send this link to the person you invite. It works once, until {{date}}.",
+    "copy": "Copy",
+    "copied": "Copied",
+    "passkeyTitle": "Passkey",
+    "passkeyIntro": "A passkey lets you sign in on this device without Google.",
+    "addPasskey": "Add a passkey",
+    "passkeyAdded": "Passkey added. You can now sign in with it.",
+    "passkeyUnsupported": "This browser does not support passkeys.",
+    "passkeyFailed": "The passkey could not be added."
+  },
+  "join": {
+    "title": "Join a household",
+    "intro": "You have been invited to join a household on Kitchen.",
+    "signInFirst": "Sign in to accept",
+    "accept": "Join the household",
+    "notFound": "This invitation is invalid, already used or expired.",
+    "alreadyInHousehold": "You already belong to a household."
   }
 }

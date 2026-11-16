@@ -2,6 +2,7 @@ package dev.julco.kitchen.household;
 
 import dev.julco.kitchen.user.AppUser;
 import dev.julco.kitchen.user.AppUserRepository;
+import dev.julco.kitchen.user.AuthenticatedUser;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -57,6 +58,19 @@ public class HouseholdService {
         Household household = households.save(new Household(name.strip()));
         members.save(new HouseholdMember(household.getId(), user.getId(), MemberRole.OWNER));
         return new CurrentMember(user.getId(), household.getId(), MemberRole.OWNER, user.getLocale());
+    }
+
+    /** The current member's household. */
+    @Transactional(readOnly = true)
+    public HouseholdSummary getHousehold(@NotNull CurrentMember currentMember) {
+        Household household = households.findById(currentMember.householdId()).orElseThrow();
+        return new HouseholdSummary(household.getId(), household.getName(), currentMember.role());
+    }
+
+    /** The household of an authenticated user, if they belong to one. */
+    @Transactional(readOnly = true)
+    public Optional<HouseholdSummary> findHousehold(@NotNull AuthenticatedUser authenticatedUser) {
+        return resolveCurrentMember(authenticatedUser.userId()).map(this::getHousehold);
     }
 
     /** Members of the current member's household, oldest first. */

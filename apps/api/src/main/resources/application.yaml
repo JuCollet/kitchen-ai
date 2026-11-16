@@ -7,6 +7,17 @@
 spring:
   application:
     name: kitchen-api
+  config:
+    # Local secrets (Google client) in apps/api/.env, never committed. See .env.example.
+    import: optional:file:.env[.properties]
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID:not-configured}
+            client-secret: ${GOOGLE_CLIENT_SECRET:not-configured}
+            scope: openid, profile, email
   jpa:
     # Flyway owns the schema. Hibernate only checks that entities match it.
     hibernate:
@@ -20,7 +31,25 @@ spring:
     virtual:
       enabled: true
 
+kitchen:
+  # URL opened in the browser. Locally: the Vite dev server, which proxies the API.
+  public-url: ${KITCHEN_PUBLIC_URL:http://localhost:5173}
+
 server:
+  # Trust X-Forwarded-Host/Proto: the API is only reachable through a proxy that sets them
+  # (Traefik in production, the Vite dev server locally). Needed to build the right Google
+  # redirect URI and to know the request came over HTTPS.
+  forward-headers-strategy: framework
+  servlet:
+    session:
+      timeout: 30d
+      cookie:
+        name: KITCHEN_SESSION
+        # Not readable from JavaScript, only sent over HTTPS (browsers treat localhost as secure),
+        # not sent with cross-site requests except top-level navigation.
+        http-only: true
+        secure: true
+        same-site: lax
   # Never leak stack traces or exception messages to clients.
   error:
     include-stacktrace: never

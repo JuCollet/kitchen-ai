@@ -18,7 +18,7 @@ Developer: Julien, React/TypeScript expert, ramping up on backend, security and 
 
 Backend (from `apps/api`, Docker must be running):
 
-- `./mvnw spring-boot:run`: starts the API on :8080 and PostgreSQL from `compose.yaml`
+- `./mvnw spring-boot:run`: starts the API on :8080 and PostgreSQL from `compose.yaml`. Google sign-in needs `apps/api/.env` (copy `.env.example`, never committed)
 - `./mvnw test` (or `./mvnw verify`, as in CI)
 
 Front end (from the repository root):
