@@ -6,6 +6,12 @@ import { Button } from '@/components/ui/button'
 import { passkeysSupported, signInWithPasskey } from '@/lib/passkeys'
 import { PageShell } from './PageShell'
 
+/** Only follow redirects to this site's OAuth endpoints, never to another site. */
+function isSameOriginServerPath(url: string): boolean {
+  const target = new URL(url, window.location.origin)
+  return target.origin === window.location.origin && target.pathname.startsWith('/oauth2/')
+}
+
 export function SignInPage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
@@ -15,8 +21,10 @@ export function SignInPage() {
   async function passkeySignIn() {
     setPasskeyFailed(false)
     try {
-      await signInWithPasskey()
-      navigate('/account')
+      const redirectUrl = await signInWithPasskey()
+      // Resume an AI authorization request (a server URL, full navigation), else the account page.
+      if (redirectUrl && isSameOriginServerPath(redirectUrl)) window.location.assign(redirectUrl)
+      else navigate('/account')
     } catch {
       setPasskeyFailed(true)
     }

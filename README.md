@@ -28,4 +28,4 @@ Checks: `./mvnw verify` in `apps/api`; `pnpm lint`, `pnpm test`, `pnpm build` at
 
 ## Status
 
-Framing done (16 November 2026). Phases 1 (monorepo skeleton), 2 (data model, isolation) and 3 (sign-in, households, invitations) done; phase 3 checked manually with a real Google client (two accounts joined the same household, passkey sign-in). Next step: phase 4, OAuth server and minimal MCP.
+Framing done (16 November 2026). Phases 1 (monorepo skeleton), 2 (data model, isolation), 3 (sign-in, households, invitations) and 4 (OAuth server and minimal MCP) done; phase 4 checked with the MCP Inspector and a real Claude through a temporary Cloudflare tunnel (`cloudflared tunnel --url http://localhost:5173`, with `KITCHEN_PUBLIC_URL` set to the tunnel URL). Next step: phase 5, MCP Apps spike.

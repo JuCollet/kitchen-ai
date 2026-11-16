@@ -41,8 +41,8 @@ Versions verified on 16 November 2026 (phase 1).
 | Database | PostgreSQL 18, `jsonb` for flexible structures |
 | Migrations | Flyway (plain SQL) |
 | Data access | Spring Data JPA (Hibernate), `ddl-auto=validate`, `open-in-view=false` |
-| MCP | Official MCP Java SDK, through its Spring integration (Spring AI MCP Server) **[to verify]**: Streamable HTTP transport, stateless mode |
-| OAuth for AIs | Spring Authorization Server, with dynamic client registration (DCR) **[to verify]** |
+| MCP | Spring AI 2.0 MCP server (`spring-ai-starter-mcp-server-webmvc`, MCP Java SDK 2.1): stateless Streamable HTTP (`spring.ai.mcp.server.protocol=STATELESS`), tools declared with `@McpTool`. The SDK speaks the protocol up to revision 2025-11-25; the spec's latest revision is 2026-07-28, clients negotiate the version |
+| OAuth for AIs | Spring Security 7.1 authorization server (`spring-boot-starter-oauth2-authorization-server`), open dynamic client registration (RFC 7591), JDBC storage. No community MCP security library (decision of 16 November 2026, phase 4): the audience and the MCP-specific settings are a few dozen lines of our own. Client ID Metadata Documents (CIMD, recommended by the MCP spec, DCR being deprecated) are not supported by Spring Security yet: to add if a client stops supporting DCR |
 | User sign-in | Spring Security: OAuth2 Login (Google) and WebAuthn (passkeys) **[to verify]** |
 | PDF | Gotenberg (headless Chrome, service in the cluster); Thymeleaf HTML/CSS templates |
 | Validation | Jakarta Bean Validation |
@@ -114,12 +114,20 @@ Each business package contains its entity, repository, service, MCP tools and we
 
 - **Browser**: Google or passkey sign-in, server-side session, `HttpOnly`, `Secure`, `SameSite=Lax` cookie (`KITCHEN_SESSION`), CSRF protection. The front end never handles a token.
   - The account is created at the first Google sign-in (verified email required; an email already used by another Google account is refused, never merged). Passkeys are added afterwards from the account page, through Spring Security's WebAuthn endpoints (`/webauthn/**`, `/login/webauthn`), stored in PostgreSQL.
-  - Every authentication exposes the Kitchen user id as principal name (`KitchenOidcUser` for Google, the passkey user name for WebAuthn). Controllers receive `AuthenticatedUser` or `CurrentMember` through argument resolvers in the `auth` package.
+  - Every authentication exposes the Kitchen user id as principal name (for Google, Spring's `DefaultOidcUser` named by an extra `kitchen_user_id` attribute, never a custom principal class, which the authorization server could not read back from its JSON storage; for WebAuthn, the passkey user name). Controllers receive `AuthenticatedUser` or `CurrentMember` through argument resolvers in the `auth` package.
   - CSRF for the SPA (`csrf.spa()`): the `XSRF-TOKEN` cookie is readable by the site, which sends it back in `X-XSRF-TOKEN`. `GET /api/csrf` makes sure the cookie exists before the first POST.
   - The API trusts `X-Forwarded-*` headers (`forward-headers-strategy: framework`): it is only reachable through Traefik in production and through the Vite proxy locally.
   - Sessions are kept in memory for now: a restart of the API signs everyone out. To revisit (Spring Session JDBC) if it becomes annoying.
   - Errors are `ProblemDetail` responses with a stable `code` (`not_found`, `already_in_household`…), translated by the front end.
-- **AI clients on `/mcp`**: OAuth token issued by Kitchen (Spring Authorization Server), verified as a resource server (signature, expiry, audience `https://kitchen.julco.dev/mcp`). Without a token: `401` with `WWW-Authenticate` pointing to `/.well-known/oauth-protected-resource`.
+- **AI clients on `/mcp`**: OAuth token issued by Kitchen (Spring Authorization Server), verified as a resource server (signature, expiry, issuer, audience `https://kitchen.julco.dev/mcp`). Without a token: `401` with `WWW-Authenticate` pointing to `/.well-known/oauth-protected-resource` (RFC 9728).
+  - Three filter chains, in order: the authorization server endpoints (`/oauth2/**`, `/.well-known/oauth-authorization-server`), `/mcp` and its metadata (stateless, bearer token, no CSRF), then the browser.
+  - Connecting an AI: it registers itself (`POST /oauth2/register`, open), then sends the person to `/oauth2/authorize`. Not signed in: `/sign-in` (Google or passkey), then the flow resumes (saved request). Consent is always asked, on `/consent`, which shows the client name **and the host of its redirect URIs**: registration is open, so anyone can register a client named "Claude".
+  - Whatever a client asks at registration, it gets: authorization code with PKCE (S256) and refresh token only, the single scope `kitchen`, consent required, redirect URIs in https (or http on localhost), access tokens of 1 hour, refresh tokens of 30 days, rotated at each use.
+  - The token's `sub` is the Kitchen user id; `CurrentUsers` resolves `CurrentMember` from it like from a browser session. MCP tools never take a user or household id as argument.
+  - The access token audience is the MCP resource (RFC 8707): checked on every `/mcp` request, so a token issued for another service is refused.
+  - `/mcp` validates the `Origin` header (MCP spec, against DNS rebinding): only the site itself and `kitchen.mcp.allowed-origins` (the MCP Inspector in development) are allowed. AI clients call from their servers, without `Origin`.
+  - Tokens are signed with an RSA key from `KITCHEN_OAUTH_SIGNING_KEY` (PKCS#8 PEM, secret). Without it, a temporary key is generated at startup: development only.
+  - Deleting an account deletes its authorizations (generated `app_user_id` column with a foreign key), which revokes the tokens of every connected AI.
 
 **Non-negotiable isolation rules:**
 
@@ -136,12 +144,13 @@ Each business package contains its entity, repository, service, MCP tools and we
 
 UUID (v7) keys generated by Hibernate, `timestamptz` UTC dates. Every household table has `household_id` (indexed, `on delete cascade`), including child tables (`menu_item`, `shopping_list_item`, `recipe_rating`) so that composite foreign keys can enforce isolation. Enum-like columns are lowercase strings with a check constraint; lists of short strings are `jsonb` arrays. Tokens (invitations, PDF exports) are stored only as SHA-256 hashes.
 
-Implemented in phase 2: `V1__identity_and_household.sql` and `V2__kitchen_domain.sql` (`apps/api/src/main/resources/db/migration`), which are the reference for column details. Phase 3 adds `V3__sign_in.sql`.
+Implemented in phase 2: `V1__identity_and_household.sql` and `V2__kitchen_domain.sql` (`apps/api/src/main/resources/db/migration`), which are the reference for column details. Phase 3 adds `V3__sign_in.sql`, phase 4 `V4__oauth_authorization_server.sql`.
 
 **Identity and household**
 - `app_user`: id, email, display name, `locale` (fr, nl, en), created at
 - `federated_identity`: provider (`google`), subject (Google's stable id), `user_id`
 - `user_entities`, `user_credentials`: passkeys, schema imposed by Spring Security's JDBC repositories (copied from spring-security-web), linked to `app_user` through a generated `app_user_id` column so that deleting an account deletes its passkeys
+- `oauth2_registered_client`, `oauth2_authorization`, `oauth2_authorization_consent`: AI clients, their tokens and the consents given, schema imposed by Spring Security's authorization server (PostgreSQL variant), linked to `app_user` the same way
 - `household`: id, name, created at
 - `household_member`: `household_id`, `user_id` (unique: one household per person), role (`owner`, `member`), joined at
 - `household_invitation`: `household_id`, `token_hash`, created by, expires at, used at
@@ -174,7 +183,7 @@ Aisles (`aisle`), an enum translated for display: `produce`, `frozen`, `meat_fis
 
 ### Transport
 
-Endpoint `/mcp`, Streamable HTTP, **stateless**: every request carries the token, a logical server is resolved for the current member. OAuth metadata exposed under `/.well-known/`.
+Endpoint `/mcp`, Streamable HTTP, **stateless**: every request carries the token, and tools resolve the current member from it. OAuth metadata exposed under `/.well-known/`. The latest revision of the spec (2026-07-28) makes stateless the only model (no sessions, no GET stream).
 
 ### Instructions (the brain)
 

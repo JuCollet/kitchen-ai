@@ -50,5 +50,14 @@
     "accept": "Lid worden",
     "notFound": "Deze uitnodiging is ongeldig, al gebruikt of verlopen.",
     "alreadyInHousehold": "Je hoort al bij een huishouden."
+  },
+  "consent": {
+    "title": "Een AI verbinden",
+    "intro": "{{client}} vraagt toegang tot je Kitchen-huishouden: profielen, toestellen, recepten, menu's, boodschappenlijsten en voorraadkast. Het kan ze in jouw naam lezen en wijzigen.",
+    "destination": "Toegang wordt gegeven aan:",
+    "warning": "Ga alleen verder als jij Kitchen nu zelf aan deze AI toevoegt.",
+    "allow": "Toestaan",
+    "deny": "Weigeren",
+    "notFound": "Dit verbindingsverzoek is ongeldig of verlopen. Begin opnieuw vanuit je AI."
   }
 }
