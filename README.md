@@ -26,4 +26,4 @@ Checks: `./mvnw verify` in `apps/api`; `pnpm lint`, `pnpm test`, `pnpm build` at
 
 ## Status
 
-Framing done (16 November 2026). Phase 1 (monorepo skeleton) done. Next step: phase 2, data model.
+Framing done (16 November 2026). Phase 1 (monorepo skeleton) and phase 2 (data model, isolation) done. Next step: phase 3, sign-in and households.

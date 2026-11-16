@@ -44,6 +44,8 @@ Front end (from the repository root):
 
 - **Everything in the repository is in English**: code, identifiers, comments, documentation, commit messages. Only user-facing strings are translated (FR, NL, EN).
 - Java packages by feature (`household`, `recipe`, `menu`…), not by technical layer.
+- Repositories extend Spring Data's `Repository`, never `CrudRepository`/`JpaRepository`; household entities implement `HouseholdScoped`. Services take `CurrentMember` as an explicit parameter. `ArchitectureTest` enforces this.
+- Entities reference each other by id (`UUID recipeId`), not with JPA associations.
 - UUID v7, dates in UTC (`timestamptz`), Flyway migrations never modified once applied.
 - The MCP instructions (`apps/api/src/main/resources/mcp/instructions.md`) and the tool descriptions are the core of the product: any change in the assistant's behaviour goes through them and must be justified. Tool descriptions must be self-sufficient.
 
