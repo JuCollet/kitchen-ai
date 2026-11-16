@@ -1,0 +1,10 @@
+packages:
+  - apps/web
+  - packages/*
+
+# Pin exact versions: no ^ or ~ ranges (CLAUDE.md rule 11).
+minimumReleaseAgeExclude:
+  - i18next@27.1.3
+  - react-i18next@18.0.2
+
+saveExact: true

@@ -1,0 +1,40 @@
+# Single configuration file, no per-environment profiles: anything that differs between
+# environments (database URL, credentials, OAuth clients…) comes from environment variables.
+# The datasource is not declared here:
+# - locally, spring-boot-docker-compose derives it from compose.yaml;
+# - in tests, Testcontainers provides it (@ServiceConnection);
+# - in production, it comes from SPRING_DATASOURCE_URL / _USERNAME / _PASSWORD (Kubernetes secret).
+spring:
+  application:
+    name: kitchen-api
+  jpa:
+    # Flyway owns the schema. Hibernate only checks that entities match it.
+    hibernate:
+      ddl-auto: validate
+    # Do not keep a database session open for the whole HTTP request:
+    # all data access must happen inside services.
+    open-in-view: false
+  flyway:
+    locations: classpath:db/migration
+  threads:
+    virtual:
+      enabled: true
+
+server:
+  # Never leak stack traces or exception messages to clients.
+  error:
+    include-stacktrace: never
+    include-message: never
+
+management:
+  endpoints:
+    web:
+      exposure:
+        # Only health is exposed. env, beans, heapdump… leak configuration and memory.
+        include: health
+  endpoint:
+    health:
+      show-details: never
+      # /actuator/health/liveness and /actuator/health/readiness for Kubernetes probes.
+      probes:
+        enabled: true

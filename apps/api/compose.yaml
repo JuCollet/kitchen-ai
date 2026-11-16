@@ -1,0 +1,20 @@
+# Local development only. Started automatically by `./mvnw spring-boot:run` (spring-boot-docker-compose).
+# These credentials are throwaway dev values, not secrets: production credentials come from
+# Kubernetes SealedSecrets (see docs/INFRA.md).
+services:
+  postgres:
+    # Keep the same major version as the cluster (docs/INFRA.md §6).
+    image: 'postgres:18.7'
+    environment:
+      - 'POSTGRES_DB=kitchen'
+      - 'POSTGRES_USER=kitchen'
+      - 'POSTGRES_PASSWORD=kitchen'
+    ports:
+      # Bound to localhost only, so the dev database is not reachable from the LAN.
+      - '127.0.0.1:5432:5432'
+    volumes:
+      # Postgres 18+ stores data under /var/lib/postgresql (versioned subdirectory).
+      - 'postgres-data:/var/lib/postgresql'
+
+volumes:
+  postgres-data:
