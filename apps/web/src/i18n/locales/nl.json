@@ -41,7 +41,12 @@
     "addPasskey": "Passkey toevoegen",
     "passkeyAdded": "Passkey toegevoegd. Je kunt je er nu mee aanmelden.",
     "passkeyUnsupported": "Deze browser ondersteunt geen passkeys.",
-    "passkeyFailed": "De passkey kon niet worden toegevoegd."
+    "passkeyFailed": "De passkey kon niet worden toegevoegd.",
+    "healthDataTitle": "Allergieën en intoleranties",
+    "healthDataOff": "Kitchen bewaart uw allergieën en intoleranties niet. Als u het toestaat, zijn ze zichtbaar voor de andere leden van uw huishouden en hun AI’s, zodat de menu’s van het huishouden veilig zijn voor u.",
+    "healthDataOn": "Kitchen bewaart uw allergieën en intoleranties en deelt ze met de andere leden van uw huishouden en hun AI’s.",
+    "allowHealthData": "Kitchen toestaan ze te bewaren",
+    "withdrawHealthData": "Toestemming intrekken en ze wissen"
   },
   "join": {
     "title": "Lid worden van een huishouden",
@@ -58,6 +63,8 @@
     "warning": "Ga alleen verder als jij Kitchen nu zelf aan deze AI toevoegt.",
     "allow": "Toestaan",
     "deny": "Weigeren",
-    "notFound": "Dit verbindingsverzoek is ongeldig of verlopen. Begin opnieuw vanuit je AI."
+    "notFound": "Dit verbindingsverzoek is ongeldig of verlopen. Begin opnieuw vanuit je AI.",
+    "healthData": "Ik sta Kitchen toe mijn allergieën en intoleranties te bewaren. Dit zijn gezondheidsgegevens: ze zijn zichtbaar voor de andere leden van mijn huishouden en hun AI’s, zodat de menu’s van het huishouden veilig zijn voor mij. Ik kan deze toestemming altijd intrekken op mijn accountpagina, waardoor ze gewist worden.",
+    "healthDataGiven": "U heeft Kitchen toegestaan uw allergieën en intoleranties te bewaren. U kunt deze toestemming intrekken op uw accountpagina."
   }
 }

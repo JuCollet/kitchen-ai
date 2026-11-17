@@ -61,4 +61,8 @@ public class AppUser {
     public Instant getCreatedAt() {
         return createdAt;
     }
+
+    void changeLocale(Language locale) {
+        this.locale = locale;
+    }
 }

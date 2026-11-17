@@ -126,6 +126,14 @@ class DatabaseConstraintsTest {
     }
 
     @Test
+    void allergies_are_never_stored_without_consent() {
+        assertThatThrownBy(() -> jdbc.update(
+                "update person_profile set allergies = '[\"peanuts\"]' where user_id = ?", a.userId()))
+                .isInstanceOf(DataIntegrityViolationException.class)
+                .hasMessageContaining("person_profile_allergies_need_consent");
+    }
+
+    @Test
     void json_columns_use_snake_case_and_lowercase_codes() {
         String ingredients = jdbc.queryForObject(
                 "select ingredients::text from recipe where id = ?", String.class, a.recipeId());

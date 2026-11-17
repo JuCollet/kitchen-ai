@@ -34,6 +34,8 @@ public class PersonProfile {
 
     private Instant onboardingCompletedAt;
 
+    private Instant healthDataConsentAt;
+
     @UpdateTimestamp
     @Column(nullable = false)
     private Instant updatedAt;
@@ -68,7 +70,50 @@ public class PersonProfile {
         return onboardingCompletedAt;
     }
 
+    public Instant getHealthDataConsentAt() {
+        return healthDataConsentAt;
+    }
+
+    public boolean hasHealthDataConsent() {
+        return healthDataConsentAt != null;
+    }
+
     public Instant getUpdatedAt() {
         return updatedAt;
+    }
+
+    void setDiet(String diet) {
+        this.diet = diet;
+    }
+
+    /** Callers check consent first; the database refuses allergies without it anyway (V5). */
+    void setAllergies(List<String> allergies) {
+        this.allergies = new ArrayList<>(allergies);
+    }
+
+    void setDislikes(List<String> dislikes) {
+        this.dislikes = new ArrayList<>(dislikes);
+    }
+
+    void setNotes(String notes) {
+        this.notes = notes;
+    }
+
+    void completeOnboarding(Instant at) {
+        if (onboardingCompletedAt == null) {
+            onboardingCompletedAt = at;
+        }
+    }
+
+    void giveHealthDataConsent(Instant at) {
+        if (healthDataConsentAt == null) {
+            healthDataConsentAt = at;
+        }
+    }
+
+    /** Withdrawing consent erases the health data it covered. */
+    void withdrawHealthDataConsent() {
+        healthDataConsentAt = null;
+        allergies = new ArrayList<>();
     }
 }

@@ -44,6 +44,11 @@ public class UserService {
         return users.findById(authenticatedUser.userId()).orElseThrow(NotFoundException::new);
     }
 
+    /** Language of the site, the AI's answers and the onboarding questions. */
+    public void changeLanguage(@NotNull UUID userId, @NotNull Language language) {
+        users.findById(userId).orElseThrow(NotFoundException::new).changeLocale(language);
+    }
+
     private AppUser createFromGoogle(String subject, String email, String displayName, Language locale) {
         if (users.existsByEmailIgnoreCase(email)) {
             throw new EmailAlreadyUsedException();

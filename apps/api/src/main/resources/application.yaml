@@ -27,18 +27,19 @@ spring:
     open-in-view: false
   flyway:
     locations: classpath:db/migration
+  messages:
+    # messages*.properties (onboarding questions). English when the language has no bundle,
+    # never the server's own locale.
+    basename: messages
+    fallback-to-system-locale: false
   ai:
     mcp:
       server:
         # Stateless Streamable HTTP: every request carries its token, any instance can answer it.
         protocol: STATELESS
         name: kitchen
-        version: 0.5.0
-        # Placeholder until phase 6 writes the real instructions (mcp/instructions.md).
-        instructions: >-
-          Kitchen is the household's cooking memory (recipes, menus, shopping lists).
-          Use the ping tool to check the connection, and spike_widget only when the person
-          asks to test the Kitchen widget.
+        version: 0.6.0
+        # The instructions (the brain) live in mcp/instructions.md, loaded by McpInstructions.
   threads:
     virtual:
       enabled: true
