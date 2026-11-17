@@ -122,3 +122,13 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* The shared shopping list (packages/shopping-list) reads the MCP Apps host variables: on the
+   site, they come from the site's own theme. */
+.ksl-site {
+  --font-sans: inherit;
+  --color-text-primary: var(--foreground);
+  --color-text-secondary: var(--muted-foreground);
+  --color-text-danger: var(--destructive);
+  --color-border-secondary: var(--border);
+}

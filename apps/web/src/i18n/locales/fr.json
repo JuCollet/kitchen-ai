@@ -67,5 +67,11 @@
     "notFound": "Cette demande de connexion est invalide ou a expiré. Recommence depuis ton IA.",
     "healthData": "J’autorise Kitchen à enregistrer mes allergies et intolérances. Ce sont des données de santé : elles seront visibles par les autres membres de mon foyer et par leurs IA, pour que les menus du foyer soient sans risque pour moi. Je peux retirer ce consentement à tout moment sur la page de mon compte, ce qui les efface.",
     "healthDataGiven": "Vous avez autorisé Kitchen à enregistrer vos allergies et intolérances. Vous pouvez retirer ce consentement sur la page de votre compte."
+  },
+  "shoppingList": {
+    "title": "Liste de courses",
+    "notFound": "Cette liste de courses n'existe pas, ou appartient à un autre foyer.",
+    "signInFirst": "Connecte-toi pour voir la liste de courses de ton foyer.",
+    "signIn": "Se connecter"
   }
 }

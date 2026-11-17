@@ -67,5 +67,11 @@
     "notFound": "Dit verbindingsverzoek is ongeldig of verlopen. Begin opnieuw vanuit je AI.",
     "healthData": "Ik sta Kitchen toe mijn allergieën en intoleranties te bewaren. Dit zijn gezondheidsgegevens: ze zijn zichtbaar voor de andere leden van mijn huishouden en hun AI’s, zodat de menu’s van het huishouden veilig zijn voor mij. Ik kan deze toestemming altijd intrekken op mijn accountpagina, waardoor ze gewist worden.",
     "healthDataGiven": "U heeft Kitchen toegestaan uw allergieën en intoleranties te bewaren. U kunt deze toestemming intrekken op uw accountpagina."
+  },
+  "shoppingList": {
+    "title": "Boodschappenlijst",
+    "notFound": "Deze boodschappenlijst bestaat niet, of hoort bij een ander huishouden.",
+    "signInFirst": "Meld je aan om de boodschappenlijst van je huishouden te zien.",
+    "signIn": "Aanmelden"
   }
 }

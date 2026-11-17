@@ -63,6 +63,11 @@ public class PantryItem implements HouseholdScoped {
         this.source = source;
     }
 
+    /** Puts back the quantity an update replaced, even an unknown (null) one. */
+    public void restoreQuantity(String quantity) {
+        this.quantity = quantity;
+    }
+
     public UUID getId() {
         return id;
     }

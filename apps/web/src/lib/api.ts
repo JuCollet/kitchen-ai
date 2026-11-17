@@ -1,3 +1,4 @@
+import { shoppingListSchema } from '@kitchen/shopping-list'
 import { z } from 'zod'
 
 /** An API call that failed. `code` is the stable error code sent by the server, if any. */
@@ -100,6 +101,8 @@ export const healthDataConsentSchema = z.object({ consent: z.boolean() })
 /** Form input, validated before it is sent (the server validates again). */
 export const householdNameSchema = z.string().trim().min(1, 'required').max(100, 'tooLong')
 
+const listPath = (listId: string) => `/api/shopping-lists/${encodeURIComponent(listId)}`
+
 export const api = {
   me: () => request('GET', '/api/me', meSchema),
   // async: invalid input rejects the promise, like a server error, instead of throwing.
@@ -110,6 +113,11 @@ export const api = {
   acceptInvitation: (token: string) =>
     request('POST', '/api/invitations/accept', householdSchema, { token }),
   signOut: () => request('POST', '/logout', z.undefined()),
+  shoppingList: (listId: string) => request('GET', listPath(listId), shoppingListSchema),
+  setChecked: (listId: string, itemId: string, checked: boolean) =>
+    request('POST', `${listPath(listId)}/${checked ? 'check' : 'uncheck'}`, shoppingListSchema, {
+      itemIds: [itemId],
+    }),
   healthDataConsent: () =>
     request('GET', '/api/me/health-data-consent', healthDataConsentSchema).then((r) => r.consent),
   setHealthDataConsent: (consent: boolean) =>

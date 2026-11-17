@@ -1,0 +1,9 @@
+/* The widget page itself; the list styles are in shopping-list.css, shared with the site. */
+:root {
+  color-scheme: light dark;
+  background: transparent;
+}
+
+body {
+  margin: 0;
+}

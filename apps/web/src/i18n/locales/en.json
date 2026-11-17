@@ -67,5 +67,11 @@
     "notFound": "This connection request is invalid or has expired. Start again from your AI.",
     "healthData": "Allow Kitchen to store my allergies and intolerances. These are health data: they will be visible to the other members of my household and to their AIs, so that household menus are safe for me. I can withdraw this consent at any time on my account page, which erases them.",
     "healthDataGiven": "You allowed Kitchen to store your allergies and intolerances. You can withdraw this consent on your account page."
+  },
+  "shoppingList": {
+    "title": "Shopping list",
+    "notFound": "This shopping list does not exist, or belongs to another household.",
+    "signInFirst": "Sign in to see your household's shopping list.",
+    "signIn": "Sign in"
   }
 }

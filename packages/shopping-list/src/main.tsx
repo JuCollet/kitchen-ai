@@ -1,7 +1,8 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { Widget } from './Widget'
-import './styles.css'
+import './shopping-list.css'
+import './widget.css'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
