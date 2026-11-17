@@ -24,8 +24,10 @@ pnpm install && pnpm dev                # site on :5173
 
 Google sign-in needs a Google OAuth client: copy `apps/api/.env.example` to `apps/api/.env` and fill it in. Open the site on http://localhost:5173 (the Vite dev server proxies the API).
 
+The MCP App widget (`packages/shopping-list`) is served by the API from its classpath: run `pnpm build` before starting the API (or restart the API after rebuilding it). Without it, the API serves a "widget not built" placeholder.
+
 Checks: `./mvnw verify` in `apps/api`; `pnpm lint`, `pnpm test`, `pnpm build` at the root.
 
 ## Status
 
-Framing done (16 November 2026). Phases 1 (monorepo skeleton), 2 (data model, isolation), 3 (sign-in, households, invitations) and 4 (OAuth server and minimal MCP) done; phase 4 checked with the MCP Inspector and a real Claude through a temporary Cloudflare tunnel (`cloudflared tunnel --url http://localhost:5173`, with `KITCHEN_PUBLIC_URL` set to the tunnel URL). Next step: phase 5, MCP Apps spike.
+Framing done (16 November 2026). Phases 1 (monorepo skeleton), 2 (data model, isolation), 3 (sign-in, households, invitations) 4 (OAuth server and minimal MCP) and 5 (MCP Apps spike) done; phase 4 checked with the MCP Inspector and a real Claude through a temporary Cloudflare tunnel (`cloudflared tunnel --url http://localhost:5173`, with `KITCHEN_PUBLIC_URL` set to the tunnel URL). Phase 5 (MCP Apps spike) done: the `spike_widget` widget displays and calls a tool back in Claude and ChatGPT. Next step: phase 6, instructions, `get_context`, profiles, appliances and onboarding.
