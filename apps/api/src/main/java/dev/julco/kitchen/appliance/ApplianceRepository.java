@@ -12,4 +12,6 @@ public interface ApplianceRepository extends Repository<Appliance, UUID> {
     Optional<Appliance> findByIdAndHouseholdId(UUID id, UUID householdId);
 
     List<Appliance> findAllByHouseholdIdOrderByName(UUID householdId);
+
+    long countByHouseholdId(UUID householdId);
 }

@@ -2,7 +2,6 @@ package dev.julco.kitchen.mcp;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -10,10 +9,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import dev.julco.kitchen.HouseholdFixture;
+import dev.julco.kitchen.McpTestClient;
 import dev.julco.kitchen.TestcontainersConfiguration;
 import jakarta.persistence.EntityManager;
-import java.time.Instant;
-import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,12 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.security.oauth2.jwt.JwsHeader;
-import org.springframework.security.oauth2.jwt.JwtClaimsSet;
-import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
-import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,35 +78,11 @@ class McpAppsTest {
 
     @Test
     void the_widget_needs_a_token() throws Exception {
-        mvc.perform(request(null, "resources/read", "{\"uri\": \"%s\"}".formatted(WIDGET)))
+        rpc(null, "resources/read", "{\"uri\": \"%s\"}".formatted(WIDGET))
                 .andExpect(status().isUnauthorized());
     }
 
     private ResultActions rpc(UUID userId, String method, String params) throws Exception {
-        return mvc.perform(request(token(userId), method, params));
-    }
-
-    private static org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder request(
-            String token, String method, String params) {
-        var request = post("/mcp")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON, MediaType.TEXT_EVENT_STREAM)
-                .content("""
-                        {"jsonrpc": "2.0", "id": 1, "method": "%s", "params": %s}""".formatted(method, params));
-        return token == null ? request : request.header(HttpHeaders.AUTHORIZATION, "Bearer " + token);
-    }
-
-    private String token(UUID userId) {
-        Instant now = Instant.now();
-        JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer("http://localhost:5173")
-                .subject(userId.toString())
-                .audience(List.of("http://localhost:5173/mcp"))
-                .issuedAt(now)
-                .expiresAt(now.plusSeconds(300))
-                .build();
-        return new NimbusJwtEncoder(jwkSource)
-                .encode(JwtEncoderParameters.from(JwsHeader.with(() -> "RS256").build(), claims))
-                .getTokenValue();
+        return new McpTestClient(mvc, jwkSource).rpc(userId, method, params);
     }
 }

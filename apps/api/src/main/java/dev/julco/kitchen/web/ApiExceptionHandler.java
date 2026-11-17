@@ -1,5 +1,6 @@
 package dev.julco.kitchen.web;
 
+import dev.julco.kitchen.common.InvalidInputException;
 import dev.julco.kitchen.common.NotFoundException;
 import dev.julco.kitchen.household.AlreadyInHouseholdException;
 import dev.julco.kitchen.user.EmailAlreadyUsedException;
@@ -30,6 +31,11 @@ class ApiExceptionHandler {
     @ExceptionHandler(EmailAlreadyUsedException.class)
     ProblemDetail emailAlreadyUsed() {
         return problem(HttpStatus.CONFLICT, "email_already_used");
+    }
+
+    @ExceptionHandler(InvalidInputException.class)
+    ProblemDetail invalidInput() {
+        return problem(HttpStatus.BAD_REQUEST, "invalid_request");
     }
 
     /** Bean Validation on service method parameters. */

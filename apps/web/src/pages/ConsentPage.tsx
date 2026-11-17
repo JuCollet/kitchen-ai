@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react'
+import { type FormEvent, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSearchParams } from 'react-router'
 import { z } from 'zod'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
-import { request } from '@/lib/api'
+import { api, request } from '@/lib/api'
 import { PageShell } from './PageShell'
 
 const consentSchema = z.object({ clientName: z.string(), redirectHosts: z.array(z.string()) })
@@ -14,6 +14,9 @@ type Consent = z.infer<typeof consentSchema>
  * Consent page of the OAuth flow: Spring Security sends the person here with client_id, state and
  * scope. The answer is a real form POST to /oauth2/authorize (not fetch): the response is a
  * redirect back to the AI, which the browser must follow. Submitting without scope means "deny".
+ *
+ * Consent for health data (allergies) is asked here too, unticked by default, and saved before the
+ * form is submitted: it is given on Kitchen's own site, never through an AI (docs/PLAN.md §8).
  */
 export function ConsentPage() {
   const { t } = useTranslation()
@@ -24,6 +27,9 @@ export function ConsentPage() {
   const valid = clientId !== '' && state !== ''
   const [consent, setConsent] = useState<Consent | null>(null)
   const [failed, setFailed] = useState(!valid)
+  // null: unknown (not loaded, or the request failed): the question is not shown.
+  const [healthConsent, setHealthConsent] = useState<boolean | null>(null)
+  const [healthChecked, setHealthChecked] = useState(false)
 
   useEffect(() => {
     if (!valid) return
@@ -31,7 +37,21 @@ export function ConsentPage() {
       setConsent,
       () => setFailed(true),
     )
+    api.healthDataConsent().then(setHealthConsent, () => setHealthConsent(null))
   }, [clientId, valid])
+
+  async function allow(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    const form = event.currentTarget
+    if (healthConsent === false && healthChecked) {
+      try {
+        await api.setHealthDataConsent(true)
+      } catch {
+        // The connection matters more: the person can still allow it on their account page.
+      }
+    }
+    form.submit()
+  }
 
   if (failed) {
     return (
@@ -56,9 +76,23 @@ export function ConsentPage() {
           ))}
         </ul>
       </div>
+      {healthConsent === false && (
+        <label className="flex items-start gap-2 text-sm">
+          <input
+            type="checkbox"
+            className="mt-1"
+            checked={healthChecked}
+            onChange={(event) => setHealthChecked(event.target.checked)}
+          />
+          <span>{t('consent.healthData')}</span>
+        </label>
+      )}
+      {healthConsent === true && (
+        <p className="text-sm text-muted-foreground">{t('consent.healthDataGiven')}</p>
+      )}
       <p className="text-sm">{t('consent.warning')}</p>
       <div className="flex gap-2">
-        <form method="post" action="/oauth2/authorize">
+        <form method="post" action="/oauth2/authorize" onSubmit={(event) => void allow(event)}>
           <input type="hidden" name="client_id" value={clientId} />
           <input type="hidden" name="state" value={state} />
           {scopes.map((scope) => (

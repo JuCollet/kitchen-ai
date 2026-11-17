@@ -156,8 +156,8 @@ Implemented in phase 2: `V1__identity_and_household.sql` and `V2__kitchen_domain
 - `household_invitation`: `household_id`, `token_hash`, created by, expires at, used at
 
 **Profiles**
-- `person_profile` (1-1 with `app_user`): diet, allergies **(health data)**, dislikes, notes, `onboarding_completed_at`
-- `household_profile` (1-1 with `household`): number of people at the table, goals (closed list + text), budget, max active time, staple ingredients, notes
+- `person_profile` (1-1 with `app_user`): diet, allergies **(health data)**, dislikes, notes, `onboarding_completed_at`, `health_data_consent_at` (a check constraint refuses allergies without consent)
+- `household_profile` (1-1 with `household`): number of people at the table, goals (closed list + text), budget, max active time, staple ingredients, notes, `onboarding_completed_at` (an empty list cannot tell "not asked" from "nothing to report", so each onboarding part is marked done explicitly)
 
 **Appliances**
 - `appliance`: `household_id`, name, brand and model, `spec` (`jsonb`: modes `{name, temp_min, temp_max, notes}`, capacity, remarks), `usage_preference` (`default` | `suggest` | `on_request`), confirmed at, confirmed by
@@ -187,7 +187,7 @@ Endpoint `/mcp`, Streamable HTTP, **stateless**: every request carries the token
 
 ### Instructions (the brain)
 
-Written in English (`mcp/instructions.md`), sent at initialisation. Content:
+Written in English (`mcp/instructions.md`), loaded at startup into the Spring AI server properties (`McpInstructions`) and sent at initialisation. The onboarding questions themselves are not in the instructions: `get_context` returns them, translated (`messages*.properties`), in the order the server decides. Content:
 
 - Role: the household's cooking assistant; answer in the person's language.
 - **Always call `get_context` at the start of a conversation about cooking.** If onboarding is incomplete, run the interview with the questions provided by the server.
@@ -225,7 +225,7 @@ Tool descriptions must be self-sufficient, for clients that ignore the instructi
 | `publish_recipe` / `unpublish_recipe` | Voluntary sharing of a household recipe |
 | `import_shared_recipe` | Copies a shared recipe into the household's book |
 
-All arguments are validated, with maximum sizes. Errors are written so that the model can correct itself ("recipe not found, use search_recipes").
+All arguments are validated, with maximum sizes. Errors are written so that the model can correct itself ("recipe not found, use search_recipes"). Tools run through `ToolRunner`: only messages written for the AI (`InvalidInputException`, validation paths like `spec.modes[0].name`) reach the client; any other exception becomes a generic internal error and only its type is logged, because Spring AI would otherwise send any exception message to the client. Tool arguments and results use camelCase (Java parameter names), except the appliance spec sheet, stored and exchanged as snake_case JSON (`temp_min`). The tool JSON schemas are generated from the Java types: in nested records, a field without `@JsonProperty` is required, so optional fields carry `@JsonProperty` and `@JsonPropertyDescription`.
 
 ### Prompts
 
@@ -264,7 +264,7 @@ Titles and descriptions translated into the person's language.
 | `/` | public | The concept, the "Get started" button |
 | `/connect` | public | Step-by-step guide per client (Claude, ChatGPT, other), URL to copy |
 | `/sign-in` | public | Google, passkey; also used by the AIs' OAuth flow |
-| `/consent` | signed in | Authorising an AI; acceptance of the privacy policy at first sign-in |
+| `/consent` | signed in | Authorising an AI; consent for health data (unticked box, phase 6); acceptance of the privacy policy at first sign-in |
 | `/join#<token>` | public then signed in | Join a household by invitation. The token is in the URL fragment, which browsers never send to a server, so it cannot end up in access logs |
 | `/account` | signed in | My data, my household and its members, invite, connected AIs (revocation), passkeys, JSON export, account deletion |
 | `/list/:id` | household member | Shopping list fallback page |
@@ -274,7 +274,7 @@ Site API under `/api` (session), documented with OpenAPI; the TypeScript client 
 
 ## 8. GDPR
 
-- Allergies = health data: explicit consent at first sign-in.
+- Allergies = health data: explicit consent, given on Kitchen's site only, never through an AI: an unticked box on the page that authorises an AI, and a card on "My account" to give or withdraw it (withdrawing erases the allergies). The consent text says that allergies are shared with the other household members and their AIs, since household menus respect the union of everyone's constraints.
 - Privacy policy: controller, data, purposes, hosting (Belgium), encrypted backups at Backblaze B2 (EU region), retention periods, rights.
 - Full JSON export of one's data; account deletion with token revocation. If the person is the last member of the household, the household is deleted; otherwise the recipes stay with the household.
 - No third-party analytics, no cookie other than the session.

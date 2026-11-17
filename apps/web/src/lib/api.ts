@@ -49,7 +49,7 @@ async function send(method: string, path: string, body?: unknown): Promise<Respo
 
 /** Calls the API and validates the response with `schema` (data from the server is checked too). */
 export async function request<T>(
-  method: 'GET' | 'POST',
+  method: 'GET' | 'POST' | 'PUT',
   path: string,
   schema: z.ZodType<T>,
   body?: unknown,
@@ -95,6 +95,8 @@ export type Member = z.infer<typeof memberSchema>
 export const invitationSchema = z.object({ token: z.string(), expiresAt: z.string() })
 export type Invitation = z.infer<typeof invitationSchema>
 
+export const healthDataConsentSchema = z.object({ consent: z.boolean() })
+
 /** Form input, validated before it is sent (the server validates again). */
 export const householdNameSchema = z.string().trim().min(1, 'required').max(100, 'tooLong')
 
@@ -108,4 +110,10 @@ export const api = {
   acceptInvitation: (token: string) =>
     request('POST', '/api/invitations/accept', householdSchema, { token }),
   signOut: () => request('POST', '/logout', z.undefined()),
+  healthDataConsent: () =>
+    request('GET', '/api/me/health-data-consent', healthDataConsentSchema).then((r) => r.consent),
+  setHealthDataConsent: (consent: boolean) =>
+    request('PUT', '/api/me/health-data-consent', healthDataConsentSchema, { consent }).then(
+      (r) => r.consent,
+    ),
 }

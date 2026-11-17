@@ -59,11 +59,57 @@ export function AccountPage() {
       ) : (
         <CreateHouseholdCard onCreated={() => setVersion((current) => current + 1)} />
       )}
+      <HealthDataCard />
       <PasskeyCard />
       <Button variant="outline" onClick={() => void signOut()}>
         {t('account.signOut')}
       </Button>
     </PageShell>
+  )
+}
+
+/** Consent for health data: given or withdrawn here, never by an AI. Withdrawing erases them. */
+function HealthDataCard() {
+  const { t } = useTranslation()
+  const [consent, setConsent] = useState<boolean | null>(null)
+  const [failed, setFailed] = useState(false)
+
+  useEffect(() => {
+    api.healthDataConsent().then(setConsent, () => setFailed(true))
+  }, [])
+
+  async function change(value: boolean) {
+    try {
+      setConsent(await api.setHealthDataConsent(value))
+      setFailed(false)
+    } catch {
+      setFailed(true)
+    }
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('account.healthDataTitle')}</CardTitle>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-4">
+        {consent !== null && (
+          <>
+            <p className="text-sm">
+              {t(consent ? 'account.healthDataOn' : 'account.healthDataOff')}
+            </p>
+            <Button variant="outline" onClick={() => void change(!consent)}>
+              {t(consent ? 'account.withdrawHealthData' : 'account.allowHealthData')}
+            </Button>
+          </>
+        )}
+        {failed && (
+          <Alert variant="destructive">
+            <AlertDescription>{t('common.error')}</AlertDescription>
+          </Alert>
+        )}
+      </CardContent>
+    </Card>
   )
 }
 

@@ -100,4 +100,19 @@ public class Appliance implements HouseholdScoped {
     public Instant getUpdatedAt() {
         return updatedAt;
     }
+
+    void replace(String name, String brandModel, ApplianceSpec spec) {
+        this.name = name;
+        this.brandModel = brandModel;
+        this.spec = spec;
+    }
+
+    void confirm(UUID userId, Instant at) {
+        this.confirmedBy = userId;
+        this.confirmedAt = at;
+    }
+
+    void setUsagePreference(UsagePreference usagePreference) {
+        this.usagePreference = usagePreference;
+    }
 }

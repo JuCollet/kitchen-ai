@@ -38,6 +38,8 @@ public class HouseholdProfile implements HouseholdScoped {
 
     private String notes;
 
+    private Instant onboardingCompletedAt;
+
     @UpdateTimestamp
     @Column(nullable = false)
     private Instant updatedAt;
@@ -83,5 +85,43 @@ public class HouseholdProfile implements HouseholdScoped {
 
     public Instant getUpdatedAt() {
         return updatedAt;
+    }
+
+    public Instant getOnboardingCompletedAt() {
+        return onboardingCompletedAt;
+    }
+
+    void setTableSize(Short tableSize) {
+        this.tableSize = tableSize;
+    }
+
+    void setGoals(List<String> goals) {
+        this.goals = new ArrayList<>(goals);
+    }
+
+    void setGoalsNote(String goalsNote) {
+        this.goalsNote = goalsNote;
+    }
+
+    void setBudget(String budget) {
+        this.budget = budget;
+    }
+
+    void setMaxActiveMinutes(Short maxActiveMinutes) {
+        this.maxActiveMinutes = maxActiveMinutes;
+    }
+
+    void setStaples(List<String> staples) {
+        this.staples = new ArrayList<>(staples);
+    }
+
+    void setNotes(String notes) {
+        this.notes = notes;
+    }
+
+    void completeOnboarding(Instant at) {
+        if (onboardingCompletedAt == null) {
+            onboardingCompletedAt = at;
+        }
     }
 }
