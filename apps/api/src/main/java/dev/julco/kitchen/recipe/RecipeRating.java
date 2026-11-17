@@ -30,6 +30,10 @@ public class RecipeRating implements HouseholdScoped {
     @Column(nullable = false, updatable = false)
     private UUID userId;
 
+    /** The version of the recipe that was cooked and judged. */
+    @Column(nullable = false, updatable = false)
+    private int recipeVersion;
+
     @Column(nullable = false)
     private short score;
 
@@ -42,11 +46,22 @@ public class RecipeRating implements HouseholdScoped {
 
     protected RecipeRating() {}
 
-    public RecipeRating(UUID householdId, UUID recipeId, UUID userId, short score, Instant cookedAt) {
+    public RecipeRating(
+            UUID householdId,
+            UUID recipeId,
+            int recipeVersion,
+            UUID userId,
+            short score,
+            String comment,
+            String adjustments,
+            Instant cookedAt) {
         this.householdId = householdId;
         this.recipeId = recipeId;
+        this.recipeVersion = recipeVersion;
         this.userId = userId;
         this.score = score;
+        this.comment = comment;
+        this.adjustments = adjustments;
         this.cookedAt = cookedAt;
     }
 
@@ -81,5 +96,9 @@ public class RecipeRating implements HouseholdScoped {
 
     public Instant getCookedAt() {
         return cookedAt;
+    }
+
+    public int getRecipeVersion() {
+        return recipeVersion;
     }
 }

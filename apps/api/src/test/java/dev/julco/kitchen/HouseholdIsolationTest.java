@@ -100,9 +100,9 @@ class HouseholdIsolationTest {
         assertThat(recipes.findAllByHouseholdIdOrderByTitle(b.householdId()))
                 .extracting(Recipe::getId)
                 .containsExactly(b.recipeId());
-        assertThat(ratings.findAllByHouseholdIdAndRecipeIdOrderByCookedAtDesc(b.householdId(), a.recipeId()))
+        assertThat(ratings.findAllByHouseholdIdAndRecipeIdOrderByCookedAtDescIdDesc(b.householdId(), a.recipeId()))
                 .isEmpty();
-        assertThat(ratings.findAllByHouseholdIdAndRecipeIdOrderByCookedAtDesc(a.householdId(), a.recipeId()))
+        assertThat(ratings.findAllByHouseholdIdAndRecipeIdOrderByCookedAtDescIdDesc(a.householdId(), a.recipeId()))
                 .extracting(RecipeRating::getId)
                 .containsExactly(a.ratingId());
     }

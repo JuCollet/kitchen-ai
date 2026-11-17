@@ -28,4 +28,14 @@ public enum Aisle {
     public String code() {
         return code;
     }
+
+    /** Parses a code checked beforehand (Bean Validation); an unknown code is a bug. */
+    public static Aisle fromCode(String code) {
+        for (Aisle aisle : values()) {
+            if (aisle.code.equals(code)) {
+                return aisle;
+            }
+        }
+        throw new IllegalArgumentException("Unknown aisle code");
+    }
 }

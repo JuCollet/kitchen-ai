@@ -81,6 +81,7 @@ The machine is indirectly exposed to the internet: if it were compromised, it mu
 - One instance in the `postgres` namespace, with **one database and one role per project**: the `kitchen` role has no rights on the Chacun son truc database, and vice versa.
 - **Plain Postgres**: official image, pinned (major version 18, same as `apps/api/compose.yaml` and the tests), deployed as a `StatefulSet`, with a nightly **CronJob** that runs `pg_dump` per database, encrypts it (age) and sends it to B2. Maximum loss on disk failure: one day, acceptable for v1. Moving to CloudNativePG (continuous backups) remains possible later.
 - Volume on the SSD (k3s local-path).
+- **Extensions**: Kitchen's migrations create `unaccent` (V6, accent-insensitive recipe search). It is a trusted extension shipped with the official image: the `kitchen` role only needs to own its database (or have `CREATE` on it), not to be superuser.
 
 ## 7. Backups
 
