@@ -4,6 +4,7 @@ import dev.julco.kitchen.common.InvalidInputException;
 import dev.julco.kitchen.mcp.ToolRunner;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.ai.mcp.annotation.McpTool;
 import org.springframework.ai.mcp.annotation.McpToolParam;
@@ -32,9 +33,9 @@ class ApplianceTools {
                     its id, its confirmed spec sheet (the only modes and temperature ranges that \
                     may be used in recipes) and its usage preference: default (use it for every \
                     recipe where possible), suggest (may be suggested when relevant), on_request \
-                    (only when asked). Takes no arguments.""")
+                    (only when asked). Returns {appliances: [...]}. Takes no arguments.""")
     CallToolResult listAppliances() {
-        return runner.run(NOT_FOUND, appliances::list);
+        return runner.run(NOT_FOUND, member -> new Appliances(appliances.list(member)));
     }
 
     @McpTool(
@@ -87,4 +88,7 @@ class ApplianceTools {
                 .findFirst()
                 .orElseThrow(() -> new InvalidInputException("usagePreference must be default, suggest or on_request."));
     }
+
+    /** MCP structured content must be a JSON object, never a bare array. */
+    record Appliances(List<ApplianceView> appliances) {}
 }

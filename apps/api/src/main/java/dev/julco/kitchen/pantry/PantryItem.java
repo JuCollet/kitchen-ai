@@ -52,6 +52,17 @@ public class PantryItem implements HouseholdScoped {
         this.source = source;
     }
 
+    /** Updates the item; a null quantity or aisle keeps the current one. */
+    public void update(String quantity, Aisle aisle, PantrySource source) {
+        if (quantity != null) {
+            this.quantity = quantity;
+        }
+        if (aisle != null) {
+            this.aisle = aisle;
+        }
+        this.source = source;
+    }
+
     public UUID getId() {
         return id;
     }

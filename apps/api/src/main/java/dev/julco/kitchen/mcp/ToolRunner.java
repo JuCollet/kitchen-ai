@@ -8,6 +8,7 @@ import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Path;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -66,12 +67,19 @@ public class ToolRunner {
 
     /**
      * Structured content for clients that read it, and the same JSON as text for the others (MCP
-     * specification: a tool returning structured content should also return it serialised).
+     * specification: a tool returning structured content should also return it serialised). The
+     * structured content must be a JSON object: tools wrap lists in a record.
      */
     private CallToolResult success(Object data) {
+        Object structured = json.convertValue(data, Object.class);
+        if (!(structured instanceof Map)) {
+            // The MCP specification requires an object: clients reject an array or a scalar. A bug
+            // in the tool, reported like any other internal error.
+            throw new IllegalStateException("Tool result is not a JSON object");
+        }
         return CallToolResult.builder()
                 .addTextContent(json.writeValueAsString(data))
-                .structuredContent(json.convertValue(data, Object.class))
+                .structuredContent(structured)
                 .build();
     }
 

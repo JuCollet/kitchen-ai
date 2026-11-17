@@ -7,7 +7,10 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
-/** A full recipe, with the spec sheet of its appliance and its rating history (latest first). */
+/**
+ * A full recipe, with the spec sheet of its appliance and its rating history (latest first).
+ * {@code lastCookedAt}: the latest rating or past menu meal, whichever is more recent.
+ */
 public record RecipeDetail(
         UUID id,
         String title,
@@ -27,4 +30,5 @@ public record RecipeDetail(
         ApplianceView appliance,
         Integer myScore,
         BigDecimal householdScore,
+        Instant lastCookedAt,
         List<RatingView> ratings) {}

@@ -4,6 +4,9 @@ import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,6 +39,27 @@ class RecipeSearchQuery {
         this.json = json;
     }
 
+    /**
+     * When each recipe was last cooked: its latest rating, or its latest meal in a menu up to
+     * today, whichever is more recent. A menu meal counts as cooked at noon UTC of its day, like
+     * a rating given with a date only (RecipeService.rate).
+     */
+    private static final String COOKED = """
+            cooked as (
+                select recipe_id, max(at) as last_cooked_at
+                from (
+                    select recipe_id, cooked_at as at
+                    from recipe_rating
+                    where household_id = :householdId
+                    union all
+                    select recipe_id, (served_on + time '12:00') at time zone 'UTC'
+                    from menu_item
+                    where household_id = :householdId and served_on <= :today
+                ) events
+                group by recipe_id
+            )
+            """;
+
     RecipeSearchPage search(UUID householdId, UUID userId, RecipeSearch criteria) {
         StringBuilder sql = new StringBuilder("""
                 with latest as (
@@ -49,22 +73,24 @@ class RecipeSearchQuery {
                     select recipe_id,
                            round(avg(score), 1) as household_score,
                            count(*) as rater_count,
-                           max(cooked_at) as last_cooked_at,
                            max(score) filter (where user_id = :userId) as my_score
                     from latest
                     group by recipe_id
-                )
+                ),
+                """ + COOKED + """
                 select r.id, r.title, r.summary, r.appliance_id, r.tags::text as tags, r.servings,
                        r.total_minutes, r.version, s.my_score, s.household_score, s.rater_count,
-                       s.last_cooked_at
+                       c.last_cooked_at
                 from recipe r
                 left join scores s on s.recipe_id = r.id
+                left join cooked c on c.recipe_id = r.id
                 where r.household_id = :householdId
                 """);
         List<String> order = new ArrayList<>();
         Map<String, Object> params = new HashMap<>();
         params.put("householdId", householdId);
         params.put("userId", userId);
+        params.put("today", today());
 
         if (criteria.text() != null && !criteria.text().isBlank()) {
             sql.append("""
@@ -99,7 +125,7 @@ class RecipeSearchQuery {
             params.put("minHouseholdScore", criteria.minHouseholdScore());
         }
         if (criteria.notCookedForDays() != null) {
-            sql.append("and (s.last_cooked_at is null or s.last_cooked_at < now() - make_interval(days => :days))\n");
+            sql.append("and (c.last_cooked_at is null or c.last_cooked_at < now() - make_interval(days => :days))\n");
             params.put("days", criteria.notCookedForDays());
         }
 
@@ -115,6 +141,22 @@ class RecipeSearchQuery {
         List<RecipeSummary> rows = jdbc.sql(sql.toString()).params(params).query(this::summary).list();
         boolean hasMore = rows.size() > size;
         return new RecipeSearchPage(hasMore ? rows.subList(0, size) : rows, page, hasMore);
+    }
+
+    Instant lastCookedAt(UUID householdId, UUID recipeId) {
+        return jdbc.sql("with " + COOKED + "select last_cooked_at from cooked where recipe_id = :recipeId")
+                .param("householdId", householdId)
+                .param("today", today())
+                .param("recipeId", recipeId)
+                .query(Timestamp.class)
+                .optional()
+                .map(Timestamp::toInstant)
+                .orElse(null);
+    }
+
+    /** Dates are UTC, like every date Kitchen stores. */
+    private static LocalDate today() {
+        return LocalDate.now(ZoneOffset.UTC);
     }
 
     private RecipeSummary summary(ResultSet rs, int rowNum) throws SQLException {

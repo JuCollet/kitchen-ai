@@ -17,6 +17,7 @@ import java.time.Instant;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -105,6 +106,20 @@ public class RecipeService {
                 blankToNull(input.adjustments()),
                 cookedAt));
         return view(rating, currentMember, memberNames(currentMember));
+    }
+
+    /**
+     * Short descriptions of recipes of the household's book, by id. A recipe of another household
+     * is simply absent, exactly like a recipe that does not exist.
+     */
+    @Transactional(readOnly = true)
+    public Map<UUID, RecipeBrief> briefs(@NotNull CurrentMember currentMember, @NotNull Collection<UUID> recipeIds) {
+        if (recipeIds.isEmpty()) {
+            return Map.of();
+        }
+        return recipes.findAllByHouseholdIdAndIdIn(currentMember.householdId(), recipeIds).stream()
+                .collect(Collectors.toMap(Recipe::getId, recipe -> new RecipeBrief(
+                        recipe.getId(), recipe.getTitle(), recipe.getApplianceId(), recipe.getServings())));
     }
 
     private Recipe find(CurrentMember currentMember, UUID recipeId) {
@@ -220,6 +235,7 @@ public class RecipeService {
                 appliance,
                 mine == null ? null : (int) mine.getScore(),
                 householdScore,
+                searchQuery.lastCookedAt(currentMember.householdId(), recipe.getId()),
                 history.stream().map(rating -> view(rating, currentMember, names)).toList());
     }
 

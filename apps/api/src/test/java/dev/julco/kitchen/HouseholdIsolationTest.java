@@ -111,7 +111,7 @@ class HouseholdIsolationTest {
     void menus() {
         assertThat(menus.findByIdAndHouseholdId(a.menuId(), b.householdId())).isEmpty();
         assertThat(menus.findByIdAndHouseholdId(a.menuId(), a.householdId())).isPresent();
-        assertThat(menus.findFirstByHouseholdIdOrderByStartsOnDesc(b.householdId())).hasValueSatisfying(
+        assertThat(menus.findFirstByHouseholdIdOrderByStartsOnDescCreatedAtDesc(b.householdId())).hasValueSatisfying(
                 menu -> assertThat(menu.getId()).isEqualTo(b.menuId()));
         assertThat(menuItems.findAllByHouseholdIdAndMenuIdOrderByServedOn(b.householdId(), a.menuId())).isEmpty();
         assertThat(menuItems.findAllByHouseholdIdAndMenuIdOrderByServedOn(a.householdId(), a.menuId()))

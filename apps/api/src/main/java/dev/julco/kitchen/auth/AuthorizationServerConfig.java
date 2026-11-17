@@ -142,12 +142,16 @@ class AuthorizationServerConfig {
      * Access tokens are only valid for Kitchen's MCP server: their audience is its resource
      * identifier (RFC 8707), checked on every /mcp request. A token stolen from another service, or
      * issued for one, is useless here, and the other way around.
+     *
+     * <p>The claims are stored with the authorization as JSON with type information, and read back
+     * when a refresh token is used. Spring Security only reads back allow-listed types: an
+     * {@code ArrayList} is, the internal class behind {@code List.of} is not.
      */
     @Bean
     OAuth2TokenCustomizer<JwtEncodingContext> accessTokenAudience(KitchenProperties kitchen) {
         return context -> {
             if (OAuth2TokenType.ACCESS_TOKEN.equals(context.getTokenType())) {
-                context.getClaims().audience(List.of(kitchen.mcpResource()));
+                context.getClaims().audience(new ArrayList<>(List.of(kitchen.mcpResource())));
             }
         };
     }
