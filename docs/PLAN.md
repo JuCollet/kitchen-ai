@@ -240,10 +240,16 @@ Titles and descriptions translated into the person's language.
 
 ### The shopping list widget (MCP App)
 
-- `packages/shopping-list`: React + shadcn component, built by Vite into **a single HTML file** served as a UI resource of the MCP server **[to verify: exact MCP Apps format, support in Claude and ChatGPT]**.
+- `packages/shopping-list`: React component, built by Vite (`vite-plugin-singlefile`) into **a single HTML file**, `dist/shopping-list.html`, that Maven copies onto the API classpath (`mcp/ui/`). The API serves a placeholder page when the widget was not built, so the Java tests do not depend on pnpm. The container image (phase 13) must build the widget before the API.
+- **MCP Apps format** (extension `io.modelcontextprotocol/ui`, spec 2026-01-26, checked in phase 5):
+  - the tool declares its widget in `_meta.ui.resourceUri` (plus the deprecated flat key `_meta["ui/resourceUri"]`, still read by some hosts);
+  - the widget is a resource `ui://kitchen/shopping-list.html` of type `text/html;profile=mcp-app`, served by `resources/read` like any MCP resource, behind the same OAuth token;
+  - the host renders it in a sandboxed iframe and talks to it with JSON-RPC over `postMessage`: `ui/initialize`, then `ui/notifications/tool-result` with the tool's `structuredContent`; the widget calls server tools with `tools/call`, which the host forwards with the person's token. The widget never holds a token and makes no network request, so the host's default CSP (no external domain) is kept;
+  - the widget uses the official SDK `@modelcontextprotocol/ext-apps` (`App`, React `useApp`, `useHostStyles` for the host's theme variables), which tracks the protocol and the hosts' variants. Spring AI declares the metadata with `metaProvider` on `@McpTool` and `@McpResource`.
+- **Client support** (phase 5 spike, 17 November 2026, through a temporary tunnel): the widget displays, follows the host's language and theme, and calls a server tool back (`ping` through `tools/call`) in **Claude and ChatGPT** (developer mode connector). No client-specific code was needed: standard keys only, no `window.openai`.
+- **Shared components** with `apps/web` (a `packages/ui`): not created in phase 5. The widget must stay small and only follows the host's style variables, while the site uses Tailwind and shadcn. To decide in phase 9, when the fallback page `/list/:id` reuses the list component.
 - The widget receives the list in the result of `get_shopping_list`, calls `check_items` / `uncheck_items` through the host, updates the display optimistically, and re-reads the list regularly to see what others have checked.
 - **Fallback page**: the same component, mounted in `apps/web` at `/list/:id` (session required, household member).
-- Where the components shared between `apps/web` and the widget live (for example a `packages/ui`) is to be decided in phase 5.
 
 ### The PDF
 

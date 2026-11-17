@@ -161,6 +161,20 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <!-- MCP App widgets built by Vite (pnpm build). Optional: when the directory is
+                 missing, the API serves a "widget not built" placeholder instead. -->
+            <resource>
+                <directory>${project.basedir}/../../packages/shopping-list/dist</directory>
+                <targetPath>mcp/ui</targetPath>
+                <includes>
+                    <include>*.html</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
