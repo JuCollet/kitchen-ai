@@ -8,5 +8,5 @@ public interface RecipeRatingRepository extends Repository<RecipeRating, UUID> {
 
     RecipeRating save(RecipeRating rating);
 
-    List<RecipeRating> findAllByHouseholdIdAndRecipeIdOrderByCookedAtDesc(UUID householdId, UUID recipeId);
+    List<RecipeRating> findAllByHouseholdIdAndRecipeIdOrderByCookedAtDescIdDesc(UUID householdId, UUID recipeId);
 }

@@ -5,6 +5,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -22,6 +23,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.mock.web.MockHttpSession;
+import org.springframework.security.authentication.TestingAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,7 +64,9 @@ class SignInTest {
     void google_sign_in_redirects_to_google() throws Exception {
         mvc.perform(get("/oauth2/authorization/google"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(header().string("Location", org.hamcrest.Matchers.startsWith("https://accounts.google.com/")));
+                .andExpect(header().string("Location", org.hamcrest.Matchers.startsWith("https://accounts.google.com/")))
+                // Signing out of Kitchen leaves Google signed in: always let the person choose.
+                .andExpect(header().string("Location", org.hamcrest.Matchers.containsString("prompt=select_account")));
     }
 
     @Test
@@ -92,9 +100,18 @@ class SignInTest {
     @Test
     void sign_out_ends_the_session() throws Exception {
         AppUser user = HouseholdFixture.createUser(em, "Nina");
+        // A real server-side session, as after a sign-in: the security context lives in it.
+        MockHttpSession session = new MockHttpSession();
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(new TestingAuthenticationToken(user.getId().toString(), null, "ROLE_USER"));
+        session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
+        mvc.perform(get("/api/me").session(session)).andExpect(status().isOk());
 
-        mvc.perform(post("/logout").with(csrf())
-                        .with(oidcLogin().idToken(token -> token.subject(user.getId().toString()))))
-                .andExpect(status().isNoContent());
+        mvc.perform(post("/logout").session(session).with(csrf()))
+                .andExpect(status().isNoContent())
+                .andExpect(cookie().maxAge("KITCHEN_SESSION", 0));
+
+        assertThat(session.isInvalid()).isTrue();
+        mvc.perform(get("/api/me").session(new MockHttpSession())).andExpect(status().isUnauthorized());
     }
 }

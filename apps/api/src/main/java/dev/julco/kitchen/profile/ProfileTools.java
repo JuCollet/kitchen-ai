@@ -1,10 +1,8 @@
 package dev.julco.kitchen.profile;
 
-import dev.julco.kitchen.common.InvalidInputException;
 import dev.julco.kitchen.common.Language;
 import dev.julco.kitchen.mcp.ToolRunner;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
-import java.util.Arrays;
 import java.util.List;
 import org.springframework.ai.mcp.annotation.McpTool;
 import org.springframework.ai.mcp.annotation.McpToolParam;
@@ -81,12 +79,6 @@ class ProfileTools {
     }
 
     private static Language language(String code) {
-        if (code == null) {
-            return null;
-        }
-        return Arrays.stream(Language.values())
-                .filter(language -> language.code().equals(code.strip().toLowerCase()))
-                .findFirst()
-                .orElseThrow(() -> new InvalidInputException("language must be fr, nl or en."));
+        return code == null ? null : Language.fromCode(code);
     }
 }

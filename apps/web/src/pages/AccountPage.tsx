@@ -41,9 +41,17 @@ export function AccountPage() {
     )
   }, [navigate, version])
 
+  const [signOutFailed, setSignOutFailed] = useState(false)
+
+  // Never pretend: if the server did not end the session, the person must know they are still
+  // signed in.
   async function signOut() {
-    await api.signOut().catch(() => undefined)
-    navigate('/')
+    try {
+      await api.signOut()
+      navigate('/')
+    } catch {
+      setSignOutFailed(true)
+    }
   }
 
   if (failed) return <ErrorPage />
@@ -64,6 +72,11 @@ export function AccountPage() {
       <Button variant="outline" onClick={() => void signOut()}>
         {t('account.signOut')}
       </Button>
+      {signOutFailed && (
+        <Alert variant="destructive">
+          <AlertDescription>{t('account.signOutFailed')}</AlertDescription>
+        </Alert>
+      )}
     </PageShell>
   )
 }

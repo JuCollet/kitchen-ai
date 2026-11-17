@@ -68,6 +68,11 @@ public class ApplianceService {
     }
 
     @Transactional(readOnly = true)
+    public ApplianceView get(@NotNull CurrentMember currentMember, @NotNull UUID applianceId) {
+        return ApplianceView.of(find(currentMember, applianceId));
+    }
+
+    @Transactional(readOnly = true)
     public long count(@NotNull CurrentMember currentMember) {
         return appliances.countByHouseholdId(currentMember.householdId());
     }

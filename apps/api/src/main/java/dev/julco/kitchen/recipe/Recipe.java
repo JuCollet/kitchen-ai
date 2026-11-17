@@ -185,4 +185,27 @@ public class Recipe implements HouseholdScoped {
     public Instant getUpdatedAt() {
         return updatedAt;
     }
+
+    /** Everything the household can edit at once. Each edit is a new version of the recipe. */
+    void edit(RecipeContent content) {
+        apply(content);
+        version++;
+    }
+
+    /** Fields set at creation, then by {@link #edit}. */
+    void apply(RecipeContent content) {
+        this.applianceId = content.applianceId();
+        this.title = content.title();
+        this.summary = content.summary();
+        this.servings = content.servings();
+        this.activeMinutes = content.activeMinutes();
+        this.totalMinutes = content.totalMinutes();
+        this.ingredients = new ArrayList<>(content.ingredients());
+        this.steps = new ArrayList<>(content.steps());
+        this.tags = new ArrayList<>(content.tags());
+        this.nutritionEstimate = content.nutritionEstimate();
+        this.benefits = new ArrayList<>(content.benefits());
+        this.language = content.language();
+        this.source = content.source();
+    }
 }

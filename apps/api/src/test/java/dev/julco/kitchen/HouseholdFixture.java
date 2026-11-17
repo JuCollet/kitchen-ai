@@ -75,7 +75,7 @@ public record HouseholdFixture(
                 List.of(new Ingredient("chicken", new BigDecimal("600"), "g", Aisle.MEAT_FISH, null)),
                 List.of(new RecipeStep("Air fry the chicken", 20, "air_fry", 200)),
                 Language.FR));
-        RecipeRating rating = persist(em, new RecipeRating(householdId, recipe.getId(), user.getId(), (short) 8, Instant.now()));
+        RecipeRating rating = persist(em, new RecipeRating(householdId, recipe.getId(), 1, user.getId(), (short) 8, null, null, Instant.now()));
 
         LocalDate monday = LocalDate.of(2026, 11, 16);
         Menu menu = persist(em, new Menu(householdId, "Week " + name, monday, monday.plusDays(6), user.getId()));

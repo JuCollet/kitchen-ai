@@ -46,7 +46,8 @@
     "healthDataOff": "Kitchen does not store your allergies and intolerances. If you allow it, they are visible to the other members of your household and to their AIs, so that household menus are safe for you.",
     "healthDataOn": "Kitchen stores your allergies and intolerances, and shares them with the other members of your household and their AIs.",
     "allowHealthData": "Allow Kitchen to store them",
-    "withdrawHealthData": "Withdraw consent and erase them"
+    "withdrawHealthData": "Withdraw consent and erase them",
+    "signOutFailed": "Sign-out failed: you are still signed in. Try again."
   },
   "join": {
     "title": "Join a household",
