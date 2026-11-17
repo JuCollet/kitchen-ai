@@ -88,7 +88,7 @@ class OnboardingToolsTest {
 
         assertThat(saved.read("$.isError", Boolean.class)).isNotEqualTo(Boolean.TRUE);
         assertThat(saved.read("$.structuredContent.usagePreference", String.class)).isEqualTo("default");
-        assertThat(mcp.call(a.userId(), "list_appliances", "{}").read("$.structuredContent[*].name", List.class))
+        assertThat(mcp.call(a.userId(), "list_appliances", "{}").read("$.structuredContent.appliances[*].name", List.class))
                 .containsExactly("Cookeo", "Speedi");
     }
 
@@ -119,7 +119,7 @@ class OnboardingToolsTest {
 
         assertThat(result.read("$.isError", Boolean.class)).isTrue();
         assertThat(result.read("$.content[0].text", String.class)).contains("use list_appliances");
-        assertThat(mcp.call(a.userId(), "list_appliances", "{}").read("$.structuredContent[0].usagePreference", String.class))
+        assertThat(mcp.call(a.userId(), "list_appliances", "{}").read("$.structuredContent.appliances[0].usagePreference", String.class))
                 .isEqualTo("suggest");
     }
 

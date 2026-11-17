@@ -56,6 +56,21 @@ class DatabaseConstraintsTest {
     }
 
     @Test
+    void a_pantry_has_one_item_per_name_whatever_the_case() {
+        // The same name in two households is fine (first: PostgreSQL aborts the transaction on a violation).
+        jdbc.update("insert into pantry_item (id, household_id, name, source) values (?, ?, 'Basmati', 'manual')",
+                UUID.randomUUID(), b.householdId());
+        jdbc.update("insert into pantry_item (id, household_id, name, source) values (?, ?, 'basmati', 'manual')",
+                UUID.randomUUID(), a.householdId());
+
+        assertThatThrownBy(() -> jdbc.update(
+                "insert into pantry_item (id, household_id, name, source) values (?, ?, 'RICE', 'manual')",
+                UUID.randomUUID(), a.householdId()))
+                .isInstanceOf(DataIntegrityViolationException.class)
+                .hasMessageContaining("pantry_item_name_idx");
+    }
+
+    @Test
     void a_recipe_used_in_a_menu_cannot_be_deleted() {
         jdbc.update("delete from recipe where id = ?", a.recipeId());
 

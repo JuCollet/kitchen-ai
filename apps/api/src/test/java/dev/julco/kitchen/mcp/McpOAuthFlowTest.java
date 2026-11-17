@@ -138,6 +138,34 @@ class McpOAuthFlowTest {
     }
 
     @Test
+    void a_refresh_token_gives_a_new_access_token_and_is_rotated() throws Exception {
+        HouseholdFixture alice = HouseholdFixture.create(em, "Alice");
+        // Like Claude: a confidential client (client_secret_post), which gets refresh tokens.
+        Connection connection = connectWithTokens(alice.userId(), "client_secret_post");
+        String refreshToken = JsonPath.read(connection.tokenResponse(), "$.refresh_token");
+
+        // The authorization (with the access token's claims) is read back from its JSON storage.
+        String refreshed = mvc.perform(post("/oauth2/token")
+                        .param("grant_type", "refresh_token")
+                        .param("refresh_token", refreshToken)
+                        .param("client_id", connection.clientId())
+                        .param("client_secret", connection.clientSecret()))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        String newRefreshToken = JsonPath.read(refreshed, "$.refresh_token");
+        assertThat(newRefreshToken).isNotEqualTo(refreshToken);
+        mcpCall(JsonPath.read(refreshed, "$.access_token"), "ping").andExpect(status().isOk());
+        // Rotation: the old refresh token no longer works.
+        mvc.perform(post("/oauth2/token")
+                        .param("grant_type", "refresh_token")
+                        .param("refresh_token", refreshToken)
+                        .param("client_id", connection.clientId())
+                        .param("client_secret", connection.clientSecret()))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void each_token_only_sees_its_own_household() throws Exception {
         HouseholdFixture alice = HouseholdFixture.create(em, "Alice");
         HouseholdFixture bob = HouseholdFixture.create(em, "Bob");
@@ -186,7 +214,19 @@ class McpOAuthFlowTest {
 
     /** Registers a client, gets the person's consent, exchanges the code: returns an access token. */
     private String connect(UUID userId) throws Exception {
-        String clientId = registerClient();
+        return JsonPath.read(connectWithTokens(userId, null).tokenResponse(), "$.access_token");
+    }
+
+    private record Connection(String clientId, String clientSecret, String tokenResponse) {}
+
+    /**
+     * @param authMethod null for a public client (PKCE only), or client_secret_post like Claude,
+     *     which registers as a confidential client and then gets refresh tokens
+     */
+    private Connection connectWithTokens(UUID userId, String authMethod) throws Exception {
+        String registration = register(authMethod == null ? "none" : authMethod);
+        String clientId = JsonPath.read(registration, "$.client_id");
+        String clientSecret = authMethod == null ? null : JsonPath.read(registration, "$.client_secret");
         Pkce pkce = Pkce.create();
         RequestPostProcessor person = oidcLogin().idToken(token -> token.subject(userId.toString()));
 
@@ -209,15 +249,19 @@ class McpOAuthFlowTest {
         assertThat(response.get("state")).isEqualTo("client-state");
 
         // 3. The client exchanges the code, proving it holds the PKCE verifier.
-        String tokenResponse = mvc.perform(post("/oauth2/token")
-                        .param("grant_type", "authorization_code")
-                        .param("code", response.get("code"))
-                        .param("redirect_uri", REDIRECT_URI)
-                        .param("client_id", clientId)
-                        .param("code_verifier", pkce.verifier()))
+        var tokenRequest = post("/oauth2/token")
+                .param("grant_type", "authorization_code")
+                .param("code", response.get("code"))
+                .param("redirect_uri", REDIRECT_URI)
+                .param("client_id", clientId)
+                .param("code_verifier", pkce.verifier());
+        if (clientSecret != null) {
+            tokenRequest.param("client_secret", clientSecret);
+        }
+        String tokenResponse = mvc.perform(tokenRequest)
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
-        return JsonPath.read(tokenResponse, "$.access_token");
+        return new Connection(clientId, clientSecret, tokenResponse);
     }
 
     /** Decoded query parameters of a redirect URL. */
@@ -229,12 +273,16 @@ class McpOAuthFlowTest {
     }
 
     private String registerClient() throws Exception {
-        String registration = mvc.perform(post("/oauth2/register").contentType(MediaType.APPLICATION_JSON).content("""
-                        {"client_name": "Claude", "redirect_uris": ["%s"], "token_endpoint_auth_method": "none"}"""
-                        .formatted(REDIRECT_URI)))
+        return JsonPath.read(register("none"), "$.client_id");
+    }
+
+    private String register(String authMethod) throws Exception {
+        return mvc.perform(post("/oauth2/register").contentType(MediaType.APPLICATION_JSON).content("""
+                        {"client_name": "Claude", "redirect_uris": ["%s"], "token_endpoint_auth_method": "%s",
+                         "grant_types": ["authorization_code", "refresh_token"]}"""
+                        .formatted(REDIRECT_URI, authMethod)))
                 .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
-        return JsonPath.read(registration, "$.client_id");
     }
 
     /** Spring Security reads GET authorization parameters from the query string, as a browser sends them. */

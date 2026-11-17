@@ -53,6 +53,14 @@ public class Menu implements HouseholdScoped {
         this.createdBy = createdBy;
     }
 
+    /** Replaces the whole menu (its items are replaced by the service). */
+    public void replace(String title, LocalDate startsOn, LocalDate endsOn, ApplianceOverrides applianceOverrides) {
+        this.title = title;
+        this.startsOn = startsOn;
+        this.endsOn = endsOn;
+        this.applianceOverrides = applianceOverrides;
+    }
+
     public UUID getId() {
         return id;
     }

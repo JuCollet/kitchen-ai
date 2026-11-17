@@ -10,5 +10,5 @@ public interface MenuRepository extends Repository<Menu, UUID> {
 
     Optional<Menu> findByIdAndHouseholdId(UUID id, UUID householdId);
 
-    Optional<Menu> findFirstByHouseholdIdOrderByStartsOnDesc(UUID householdId);
+    Optional<Menu> findFirstByHouseholdIdOrderByStartsOnDescCreatedAtDesc(UUID householdId);
 }

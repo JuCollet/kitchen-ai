@@ -9,4 +9,6 @@ public interface MenuItemRepository extends Repository<MenuItem, UUID> {
     MenuItem save(MenuItem item);
 
     List<MenuItem> findAllByHouseholdIdAndMenuIdOrderByServedOn(UUID householdId, UUID menuId);
+
+    void deleteAllByHouseholdIdAndMenuId(UUID householdId, UUID menuId);
 }

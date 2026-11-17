@@ -1,5 +1,6 @@
 package dev.julco.kitchen.recipe;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -12,4 +13,6 @@ public interface RecipeRepository extends Repository<Recipe, UUID> {
     Optional<Recipe> findByIdAndHouseholdId(UUID id, UUID householdId);
 
     List<Recipe> findAllByHouseholdIdOrderByTitle(UUID householdId);
+
+    List<Recipe> findAllByHouseholdIdAndIdIn(UUID householdId, Collection<UUID> ids);
 }
