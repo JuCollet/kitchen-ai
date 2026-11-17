@@ -1,0 +1,100 @@
+/*
+ * The shopping list, shared by the widget and the site's fallback page. Colours and fonts come from
+ * the MCP Apps host style variables (--color-text-primary…), with fallbacks; the site sets the
+ * same variables from its own theme. Class names are prefixed (ksl-) to stay out of the site's way.
+ */
+.ksl {
+  font-family: var(--font-sans, system-ui, sans-serif);
+  color: var(--color-text-primary, CanvasText);
+  padding: 12px 16px;
+}
+
+.ksl-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 12px;
+  margin-bottom: 8px;
+}
+
+.ksl-title {
+  margin: 0;
+  font-size: var(--font-heading-sm-size, 1.1rem);
+  font-weight: var(--font-weight-semibold, 600);
+  overflow-wrap: anywhere;
+}
+
+.ksl-remaining,
+.ksl-by {
+  margin: 0;
+  color: var(--color-text-secondary, GrayText);
+  font-size: var(--font-text-sm-size, 0.875rem);
+}
+
+.ksl-notice {
+  margin: 0 0 8px;
+  color: var(--color-text-danger, #b42318);
+}
+
+.ksl-aisle + .ksl-aisle {
+  margin-top: 12px;
+}
+
+.ksl-aisle-name {
+  margin: 0 0 4px;
+  font-size: var(--font-text-sm-size, 0.875rem);
+  font-weight: var(--font-weight-semibold, 600);
+  color: var(--color-text-secondary, GrayText);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.ksl-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ksl-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0 8px;
+  border-bottom: var(--border-width-regular, 1px) solid
+    var(--color-border-secondary, rgb(128 128 128 / 0.2));
+}
+
+.ksl-label {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 10px;
+  /* A comfortable target for a thumb in the store. */
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.ksl-checkbox {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  accent-color: var(--color-text-primary, CanvasText);
+}
+
+.ksl-name {
+  flex: 1;
+  overflow-wrap: anywhere;
+}
+
+.ksl-quantity {
+  color: var(--color-text-secondary, GrayText);
+  white-space: nowrap;
+}
+
+.ksl-checked .ksl-name,
+.ksl-checked .ksl-quantity {
+  text-decoration: line-through;
+  color: var(--color-text-secondary, GrayText);
+}

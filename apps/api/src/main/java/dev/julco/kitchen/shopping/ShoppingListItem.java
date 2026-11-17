@@ -2,6 +2,7 @@ package dev.julco.kitchen.shopping;
 
 import dev.julco.kitchen.common.Aisle;
 import dev.julco.kitchen.common.HouseholdScoped;
+import dev.julco.kitchen.pantry.PantryLink;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -10,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 import org.hibernate.annotations.UuidGenerator;
 
@@ -48,6 +50,13 @@ public class ShoppingListItem implements HouseholdScoped {
 
     private Instant checkedAt;
 
+    /** What checking this item did to the pantry (V8), to undo it when it is unchecked. */
+    private UUID pantryItemId;
+
+    private Boolean pantryItemCreated;
+
+    private String pantryPreviousQuantity;
+
     protected ShoppingListItem() {}
 
     public ShoppingListItem(
@@ -59,6 +68,49 @@ public class ShoppingListItem implements HouseholdScoped {
         this.unit = unit;
         this.aisle = aisle;
         this.position = position;
+    }
+
+    /** Edits the item; a null value keeps the current one. */
+    public void edit(String name, BigDecimal quantity, String unit, Aisle aisle) {
+        if (name != null) {
+            this.name = name;
+        }
+        if (quantity != null) {
+            this.quantity = quantity;
+        }
+        if (unit != null) {
+            this.unit = unit;
+        }
+        if (aisle != null) {
+            this.aisle = aisle;
+        }
+    }
+
+    public void check(UUID userId, Instant at, PantryLink pantryLink) {
+        this.checked = true;
+        this.checkedBy = userId;
+        this.checkedAt = at;
+        if (pantryLink != null) {
+            this.pantryItemId = pantryLink.pantryItemId();
+            this.pantryItemCreated = pantryLink.created();
+            this.pantryPreviousQuantity = pantryLink.previousQuantity();
+        }
+    }
+
+    public void uncheck() {
+        this.checked = false;
+        this.checkedBy = null;
+        this.checkedAt = null;
+        this.pantryItemId = null;
+        this.pantryItemCreated = null;
+        this.pantryPreviousQuantity = null;
+    }
+
+    /** What checking this item did to the pantry, if anything. */
+    public Optional<PantryLink> pantryLink() {
+        return pantryItemId == null
+                ? Optional.empty()
+                : Optional.of(new PantryLink(pantryItemId, Boolean.TRUE.equals(pantryItemCreated), pantryPreviousQuantity));
     }
 
     public UUID getId() {

@@ -9,4 +9,6 @@ public interface ShoppingListItemRepository extends Repository<ShoppingListItem,
     ShoppingListItem save(ShoppingListItem item);
 
     List<ShoppingListItem> findAllByHouseholdIdAndListIdOrderByPosition(UUID householdId, UUID listId);
+
+    void deleteByHouseholdIdAndId(UUID householdId, UUID id);
 }

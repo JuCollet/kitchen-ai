@@ -11,6 +11,8 @@ import dev.julco.kitchen.pantry.PantryService;
 import dev.julco.kitchen.pantry.PantrySummary;
 import dev.julco.kitchen.profile.HouseholdProfileView;
 import dev.julco.kitchen.profile.PersonProfileView;
+import dev.julco.kitchen.shopping.ShoppingListService;
+import dev.julco.kitchen.shopping.ShoppingListSummary;
 import dev.julco.kitchen.profile.ProfileService;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
 import java.util.List;
@@ -27,6 +29,7 @@ class ContextTool {
     private final OnboardingService onboarding;
     private final MenuService menus;
     private final PantryService pantry;
+    private final ShoppingListService shoppingLists;
     private final ToolRunner runner;
 
     ContextTool(
@@ -36,6 +39,7 @@ class ContextTool {
             OnboardingService onboarding,
             MenuService menus,
             PantryService pantry,
+            ShoppingListService shoppingLists,
             ToolRunner runner) {
         this.profiles = profiles;
         this.households = households;
@@ -43,6 +47,7 @@ class ContextTool {
         this.onboarding = onboarding;
         this.menus = menus;
         this.pantry = pantry;
+        this.shoppingLists = shoppingLists;
         this.runner = runner;
     }
 
@@ -57,8 +62,8 @@ class ContextTool {
                     appliances with their confirmed spec sheets and usage preferences, the \
                     onboarding state (if onboarding.nextQuestions is not empty, ask those \
                     questions first, in order), the latest menu, the recipes served in the last \
-                    two weeks that this person has not rated yet (recipesToRate), and a summary \
-                    of the pantry. Takes no arguments.""")
+                    two weeks that this person has not rated yet (recipesToRate), a summary of \
+                    the pantry and of the latest shopping list. Takes no arguments.""")
     CallToolResult getContext() {
         return runner.run("Household not found.", member -> new Context(
                 profiles.getMyProfile(member),
@@ -72,7 +77,8 @@ class ContextTool {
                 onboarding.state(member),
                 menus.latest(member).orElse(null),
                 menus.recipesToRate(member),
-                pantry.summary(member)));
+                pantry.summary(member),
+                shoppingLists.latestSummary(member).orElse(null)));
     }
 
     record Context(
@@ -82,7 +88,8 @@ class ContextTool {
             OnboardingState onboarding,
             MenuView latestMenu,
             List<RecipeToRate> recipesToRate,
-            PantrySummary pantry) {}
+            PantrySummary pantry,
+            ShoppingListSummary latestShoppingList) {}
 
     record Household(String name, HouseholdProfileView profile, List<Member> members) {}
 

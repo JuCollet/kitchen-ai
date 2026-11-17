@@ -49,9 +49,9 @@ class McpAppsTest {
     void the_tool_points_to_its_widget_in_both_metadata_forms() throws Exception {
         rpc(alice.userId(), "tools/list", "{}")
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.result.tools[?(@.name == 'spike_widget')]._meta.ui.resourceUri")
+                .andExpect(jsonPath("$.result.tools[?(@.name == 'get_shopping_list')]._meta.ui.resourceUri")
                         .value(hasItem(WIDGET)))
-                .andExpect(jsonPath("$.result.tools[?(@.name == 'spike_widget')]._meta['ui/resourceUri']")
+                .andExpect(jsonPath("$.result.tools[?(@.name == 'get_shopping_list')]._meta['ui/resourceUri']")
                         .value(hasItem(WIDGET)));
     }
 
@@ -71,8 +71,8 @@ class McpAppsTest {
 
     @Test
     void the_widget_data_only_shows_the_callers_household() throws Exception {
-        rpc(bob.userId(), "tools/call", "{\"name\": \"spike_widget\", \"arguments\": {}}")
-                .andExpect(jsonPath("$.result.structuredContent.household").value("Household Bob"))
+        rpc(bob.userId(), "tools/call", "{\"name\": \"get_shopping_list\", \"arguments\": {}}")
+                .andExpect(jsonPath("$.result.structuredContent.list.title").value("List Bob"))
                 .andExpect(content().string(org.hamcrest.Matchers.not(containsString("Alice"))));
     }
 

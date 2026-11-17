@@ -41,6 +41,10 @@ public class ShoppingList implements HouseholdScoped {
         this.createdBy = createdBy;
     }
 
+    public void rename(String title) {
+        this.title = title;
+    }
+
     public UUID getId() {
         return id;
     }

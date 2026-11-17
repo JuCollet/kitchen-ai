@@ -88,6 +88,40 @@ public class PantryService {
         return new PantryUpdateResult(list(currentMember), notFound);
     }
 
+    /**
+     * A shopping list item was checked: it is now at home. Adds it to the pantry, or updates the
+     * quantity of the item with the same name. Returns what was done, or empty when the pantry is
+     * full: checking an item in the store must never fail because of the pantry.
+     */
+    public Optional<PantryLink> addFromShopping(
+            @NotNull CurrentMember currentMember, @NotNull String name, String quantity, @NotNull Aisle aisle) {
+        String cleanName = name.strip();
+        Optional<PantryItem> existing = pantry.findByHouseholdIdAndNameIgnoringCase(currentMember.householdId(), cleanName);
+        if (existing.isPresent()) {
+            PantryItem item = existing.get();
+            String previous = item.getQuantity();
+            item.update(quantity, null, PantrySource.SHOPPING);
+            return Optional.of(new PantryLink(item.getId(), false, previous));
+        }
+        if (pantry.countByHouseholdId(currentMember.householdId()) >= MAX_ITEMS) {
+            return Optional.empty();
+        }
+        PantryItem created = pantry.save(new PantryItem(currentMember.householdId(), cleanName, quantity, aisle,
+                PantrySource.SHOPPING));
+        return Optional.of(new PantryLink(created.getId(), true, null));
+    }
+
+    /** A shopping list item was unchecked: undoes {@link #addFromShopping}, if the pantry item still exists. */
+    public void revertFromShopping(@NotNull CurrentMember currentMember, @NotNull PantryLink link) {
+        pantry.findByIdAndHouseholdId(link.pantryItemId(), currentMember.householdId()).ifPresent(item -> {
+            if (link.created()) {
+                pantry.deleteByHouseholdIdAndId(currentMember.householdId(), item.getId());
+            } else {
+                item.restoreQuantity(link.previousQuantity());
+            }
+        });
+    }
+
     private static void checkNoDuplicates(PantryUpdate update) {
         Set<String> seen = new HashSet<>();
         List<String> names = new ArrayList<>();

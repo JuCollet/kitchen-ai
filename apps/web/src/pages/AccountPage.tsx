@@ -16,6 +16,7 @@ import {
 } from '@/lib/api'
 import { passkeysSupported, registerPasskey } from '@/lib/passkeys'
 import { takePendingInvitation } from '@/lib/pendingInvitation'
+import { takeReturnPath } from '@/lib/returnAfterSignIn'
 import { PageShell } from './PageShell'
 
 export function AccountPage() {
@@ -31,7 +32,10 @@ export function AccountPage() {
       (loaded) => {
         // Back from Google sign-in with an invitation to accept.
         const pending = loaded.household ? null : takePendingInvitation()
+        // Back from signing in to open a shopping list from an AI app.
+        const back = loaded.household ? takeReturnPath() : null
         if (pending) navigate(`/join#${pending}`)
+        else if (back) navigate(back, { replace: true })
         else setMe(loaded)
       },
       (error: unknown) => {

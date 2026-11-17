@@ -11,6 +11,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@kitchen/shopping-list": "workspace:*",
+    "@tanstack/react-query": "5.105.3",
     "class-variance-authority": "0.7.1",
     "cn": "0.5.2",
     "i18next": "27.1.3",

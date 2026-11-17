@@ -28,5 +28,9 @@
     "vite": "8.3.8",
     "vite-plugin-singlefile": "2.3.4",
     "vitest": "5.1.0"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./shopping-list.css": "./src/shopping-list.css"
   }
 }
