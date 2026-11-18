@@ -1,0 +1,17 @@
+# Docker build context = the repository root. Keep it small, and above all keep secrets out of it:
+# apps/api/.env is read by the API at startup (spring.config.import), so it must never end up in an image.
+.git
+.claude
+docs
+**/.env
+**/.env.*
+!**/.env.example
+**/node_modules
+**/dist
+**/target
+**/build
+**/coverage
+**/playwright-report
+**/test-results
+**/*.log
+.DS_Store
