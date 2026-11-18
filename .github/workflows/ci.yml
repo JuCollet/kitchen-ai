@@ -92,3 +92,41 @@ jobs:
           labels: org.opencontainers.image.source=https://github.com/JuCollet/kitchen-ai
           cache-from: type=gha,scope=${{ matrix.name }}
           cache-to: type=gha,mode=max,scope=${{ matrix.name }}
+
+  # Promotion: once both images exist, point the cluster at them. The cluster is driven by
+  # the homelab-deploy repository (ArgoCD), so deploying means committing the new image SHA
+  # there. The deploy key below can write to that one repository and nothing else. Secrets
+  # are never exposed to pull requests from forks, and this job only runs on a push to main.
+  deploy:
+    name: Promote to homelab
+    if: github.event_name == 'push'
+    needs: [images]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    # One promotion at a time, in order: two quick merges must not race on the same files.
+    concurrency:
+      group: deploy-homelab
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: JuCollet/homelab-deploy
+          ref: main
+          ssh-key: ${{ secrets.HOMELAB_DEPLOY_KEY }}
+      - name: Point the manifests at the new images
+        env:
+          SHA: ${{ github.sha }}
+        run: |
+          sed -i -E "s|(ghcr.io/jucollet/kitchen-api:)[0-9a-f]{40}|\1${SHA}|" prod/kitchen/api.yaml
+          sed -i -E "s|(ghcr.io/jucollet/kitchen-web:)[0-9a-f]{40}|\1${SHA}|" prod/kitchen/web.yaml
+          grep -q "kitchen-api:${SHA}" prod/kitchen/api.yaml
+          grep -q "kitchen-web:${SHA}" prod/kitchen/web.yaml
+          if git diff --quiet; then
+            echo "Manifests already up to date."
+            exit 0
+          fi
+          git config user.name "kitchen-ci"
+          git config user.email "kitchen-ci@users.noreply.github.com"
+          git commit -am "Deploy kitchen ${SHA:0:7}"
+          git push origin HEAD:main
