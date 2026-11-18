@@ -11,4 +11,6 @@ public interface ShoppingListRepository extends Repository<ShoppingList, UUID> {
     Optional<ShoppingList> findByIdAndHouseholdId(UUID id, UUID householdId);
 
     Optional<ShoppingList> findFirstByHouseholdIdOrderByCreatedAtDesc(UUID householdId);
+
+    Optional<ShoppingList> findFirstByHouseholdIdAndMenuIdOrderByCreatedAtDesc(UUID householdId, UUID menuId);
 }

@@ -84,6 +84,13 @@ public class ShoppingListService {
                 .map(list -> view(currentMember, list));
     }
 
+    /** The most recent list created for this menu, if any. */
+    @Transactional(readOnly = true)
+    public Optional<ShoppingListView> latestForMenu(@NotNull CurrentMember currentMember, @NotNull UUID menuId) {
+        return lists.findFirstByHouseholdIdAndMenuIdOrderByCreatedAtDesc(currentMember.householdId(), menuId)
+                .map(list -> view(currentMember, list));
+    }
+
     @Transactional(readOnly = true)
     public Optional<ShoppingListSummary> latestSummary(@NotNull CurrentMember currentMember) {
         return latest(currentMember)

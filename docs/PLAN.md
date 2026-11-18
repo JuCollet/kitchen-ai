@@ -44,11 +44,11 @@ Versions verified on 16 November 2026 (phase 1).
 | MCP | Spring AI 2.0 MCP server (`spring-ai-starter-mcp-server-webmvc`, MCP Java SDK 2.1): stateless Streamable HTTP (`spring.ai.mcp.server.protocol=STATELESS`), tools declared with `@McpTool`. The SDK speaks the protocol up to revision 2025-11-25; the spec's latest revision is 2026-07-28, clients negotiate the version |
 | OAuth for AIs | Spring Security 7.1 authorization server (`spring-boot-starter-oauth2-authorization-server`), open dynamic client registration (RFC 7591), JDBC storage. No community MCP security library (decision of 16 November 2026, phase 4): the audience and the MCP-specific settings are a few dozen lines of our own. Client ID Metadata Documents (CIMD, recommended by the MCP spec, DCR being deprecated) are not supported by Spring Security yet: to add if a client stops supporting DCR |
 | User sign-in | Spring Security: OAuth2 Login (Google) and WebAuthn (passkeys) **[to verify]** |
-| PDF | Gotenberg (headless Chrome, service in the cluster); Thymeleaf HTML/CSS templates |
+| PDF | Gotenberg 8.39.0 (headless Chromium, its own container: `compose.yaml` locally, a service in the cluster), called with a plain `RestClient`; Thymeleaf HTML/CSS template (`templates/pdf/menu.html`) |
 | Validation | Jakarta Bean Validation |
 | Tests | JUnit 5, Testcontainers (real Postgres), MockMvc, ArchUnit for architecture rules |
 | Site API docs | springdoc-openapi |
-| Local development | `spring-boot-docker-compose`: `./mvnw spring-boot:run` starts PostgreSQL from `compose.yaml` |
+| Local development | `spring-boot-docker-compose`: `./mvnw spring-boot:run` starts PostgreSQL and Gotenberg from `compose.yaml` (only when none of them runs yet; otherwise `docker compose up -d gotenberg`) |
 
 ### Front end (`apps/web` and `packages/shopping-list`)
 
@@ -179,7 +179,7 @@ Implemented in phase 2: `V1__identity_and_household.sql` and `V2__kitchen_domain
 - `pantry_item`: `household_id`, name, quantity (free text, approximate), `aisle`, updated at, source (`shopping` | `manual`)
 
 **Exports**
-- `pdf_export`: `household_id`, requested by, `menu_id`, `token_hash`, language, expires at
+- `pdf_export`: `household_id`, requested by, `menu_id`, `token_hash`, language, expires at. Found by token hash without a household filter (`@UnscopedQuery`: the link carries no session), then the household comes from the row itself; expired rows are deleted every hour
 
 Aisles (`aisle`), an enum translated for display: `produce`, `frozen`, `meat_fish`, `dairy`, `bakery`, `dry_goods`, `canned`, `condiments`, `drinks`, `household`, `other`.
 
@@ -224,7 +224,7 @@ Tool descriptions must be self-sufficient, for clients that ignore the instructi
 | `get_shopping_list` | List with checkbox state; **declares the MCP App widget**; also returns the fallback page link |
 | `check_items` / `uncheck_items` | Called by the widget (or by the AI); idempotent; a checked item goes into the pantry (source `shopping`), unchecking undoes it |
 | `get_pantry` / `update_pantry` | Household pantry: `update_pantry` adds or updates items by name (case-insensitive) and removes items by name (unknown names returned in `notFound`), at most 300 items |
-| `export_menu_pdf` | Generates the PDF and returns a signed link valid for 15 minutes |
+| `export_menu_pdf` | Creates a download link for a menu's PDF (latest menu by default), valid for 15 minutes; says whether the PDF includes a shopping list |
 | `search_shared_recipes` | Recipes published by other households, with average rating |
 | `publish_recipe` / `unpublish_recipe` | Voluntary sharing of a household recipe |
 | `import_shared_recipe` | Copies a shared recipe into the household's book |
@@ -258,9 +258,11 @@ The message a prompt returns (`prompts/get`) is written in the person's language
 
 ### The PDF
 
-- Thymeleaf HTML/CSS template (A4, black and white), rendered by Gotenberg.
-- Content: cover page with the meal plan, shopping list by aisle with checkboxes, one sheet per recipe (ingredients at the right servings, steps, appliance settings, times, estimated nutrition, benefit labels).
-- Stored temporarily, served by `/exports/{token}` (random token, hash in the database, 15-minute expiry), then deleted.
+- Thymeleaf HTML/CSS template (A4, black and white), rendered by Gotenberg. Self-contained (no external font, image or script): Gotenberg runs Chromium without JavaScript, may only read its own temporary files, and has no network access. Every value from the household goes through `th:text` (escaped).
+- Content: cover page with the meal plan, the latest shopping list linked to the menu by aisle with checkboxes (omitted when the menu has none), one sheet per recipe and number of portions (ingredients scaled to the menu's portions, steps with appliance settings, times, estimated nutrition, benefit labels, source). Labels in FR, NL, EN (`pdf.*` in `messages*.properties`), in the language of the person who asked.
+- **Not stored** (decision of 18 November 2026, phase 10): `/exports/{token}` renders the PDF again at each download, from the menu as it is then, for the member who asked (who must still belong to the household). Containers are read-only and there is no file storage. The link (random 256-bit token, only its SHA-256 hash in the database) is public, valid 15 minutes and reusable in that window, because chat apps often open a link once to preview it. Unknown, expired or no-longer-allowed token: `404`; Gotenberg down: `503`, the same link works again later. Responses: `Cache-Control: no-store`, `Referrer-Policy: no-referrer`.
+- The HTML is built in a read-only transaction; Gotenberg is called outside it, so no database connection is held while Chromium works.
+- Tests stub Gotenberg (`PdfRenderer`) and check the HTML; the real Gotenberg is used locally and for the real test (checked on 18 November 2026: PDF generated from Claude and printed in black and white).
 
 ## 7. The website (`apps/web`)
 

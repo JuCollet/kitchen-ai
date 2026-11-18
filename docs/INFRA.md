@@ -70,7 +70,7 @@ The machine is indirectly exposed to the internet: if it were compromised, it mu
 |---|---|---|
 | `api` | GHCR, built by CI (Spring Boot buildpacks or Jib) | requests 512 Mi, limit 1 Gi; capped JVM (`MaxRAMPercentage`) |
 | `web` | nginx + static files | 32 Mi |
-| `gotenberg` | official image, pinned version | limit 1 Gi |
+| `gotenberg` | `gotenberg/gotenberg:8.39.0`, same flags as `apps/api/compose.yaml`: `--chromium-allow-list=^file:///tmp/.*`, `--chromium-deny-public-ips`, `--chromium-deny-private-ips`, `--chromium-disable-javascript`, `--api-disable-download-from`, `--webhook-disable`, `--libreoffice-disable-routes`, `--pdfengines-disable-routes`, `--prometheus-disable-collect`. The API reaches it through `KITCHEN_GOTENBERG_URL` | limit 1 Gi |
 
 - `liveness` and `readiness` probes on `/actuator/health/liveness` and `/actuator/health/readiness` for the API (enabled since phase 1).
 - Non-root containers, read-only file system, capabilities dropped, `allowPrivilegeEscalation: false`.

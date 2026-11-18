@@ -34,6 +34,7 @@ export default defineConfig({
         '/webauthn',
         '/.well-known',
         '/mcp',
+        '/exports',
       ].map((path) => [
         path,
         {

@@ -16,5 +16,24 @@ services:
       # Postgres 18+ stores data under /var/lib/postgresql (versioned subdirectory).
       - 'postgres-data:/var/lib/postgresql'
 
+  gotenberg:
+    # Renders the menu PDF (HTML to PDF with headless Chromium). Same version as the cluster
+    # (docs/INFRA.md §5). Kitchen sends it self-contained HTML: Chromium may only read the files
+    # Gotenberg writes for the request, never a URL, and runs no JavaScript.
+    image: 'gotenberg/gotenberg:8.39.0'
+    command:
+      - 'gotenberg'
+      - '--chromium-allow-list=^file:///tmp/.*'
+      - '--chromium-deny-public-ips'
+      - '--chromium-deny-private-ips'
+      - '--chromium-disable-javascript'
+      - '--api-disable-download-from'
+      - '--webhook-disable'
+      - '--libreoffice-disable-routes'
+      - '--pdfengines-disable-routes'
+      - '--prometheus-disable-collect'
+    ports:
+      - '127.0.0.1:3000:3000'
+
 volumes:
   postgres-data:

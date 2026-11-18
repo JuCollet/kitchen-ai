@@ -28,10 +28,13 @@ spring:
   flyway:
     locations: classpath:db/migration
   messages:
-    # messages*.properties (onboarding questions). English when the language has no bundle,
+    # messages*.properties (onboarding questions, prompts, PDF labels). English when the language has no bundle,
     # never the server's own locale.
     basename: messages
     fallback-to-system-locale: false
+    # Always MessageFormat, with or without arguments: a single quote is always written '' in
+    # messages*.properties, whatever the caller.
+    always-use-message-format: true
   ai:
     mcp:
       server:
@@ -51,6 +54,9 @@ kitchen:
     # RSA private key (PKCS#8 PEM) signing the AI clients' access tokens. Secret. Empty locally:
     # a temporary key is generated at startup.
     signing-key: ${KITCHEN_OAUTH_SIGNING_KEY:}
+  gotenberg:
+    # HTML to PDF service. Locally: started by compose.yaml. In the cluster: its Service.
+    url: ${KITCHEN_GOTENBERG_URL:http://localhost:3000}
   mcp:
     # Browser origins allowed on /mcp besides the site itself (MCP Inspector in development).
     allowed-origins: ${KITCHEN_MCP_ALLOWED_ORIGINS:http://localhost:6274,http://127.0.0.1:6274}
