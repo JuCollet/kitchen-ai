@@ -1,0 +1,264 @@
+<!doctype html>
+<!--
+  The menu PDF, rendered by Gotenberg (Chromium). Self-contained: no external font, image or
+  script (Gotenberg has no internet access and runs no JavaScript). Black and white, A4.
+  Every value from the household is inserted with th:text (escaped), never th:utext
+  (CLAUDE.md rule 6). Labels come from messages*.properties (pdf.*).
+-->
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${doc.lang}">
+  <head>
+    <meta charset="utf-8" />
+    <title th:text="${doc.title}">Menu</title>
+    <style>
+      @page {
+        size: A4;
+        margin: 16mm 15mm;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: 'DejaVu Sans', 'Noto Sans', 'Liberation Sans', Arial, sans-serif;
+        font-size: 10.5pt;
+        line-height: 1.4;
+        color: #000;
+      }
+      h1 {
+        font-size: 22pt;
+        margin: 0 0 2mm;
+      }
+      h2 {
+        font-size: 14pt;
+        margin: 0 0 3mm;
+        padding-bottom: 1.5mm;
+        border-bottom: 1.5pt solid #000;
+      }
+      h3 {
+        font-size: 11pt;
+        margin: 4mm 0 1.5mm;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .muted {
+        color: #444;
+      }
+      .page {
+        break-before: page;
+      }
+      .plan {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 6mm;
+      }
+      .plan th,
+      .plan td {
+        border-bottom: 0.5pt solid #888;
+        padding: 2mm 1.5mm;
+        text-align: left;
+        vertical-align: top;
+      }
+      .plan th {
+        width: 34%;
+      }
+      .meal {
+        display: block;
+      }
+      .meal-name {
+        font-size: 8.5pt;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #444;
+      }
+      .list {
+        columns: 2;
+        column-gap: 8mm;
+      }
+      .aisle {
+        break-inside: avoid;
+      }
+      ul.items {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      ul.items li {
+        display: flex;
+        gap: 2.5mm;
+        padding: 1mm 0;
+        break-inside: avoid;
+      }
+      .box {
+        flex: none;
+        width: 3.6mm;
+        height: 3.6mm;
+        margin-top: 0.6mm;
+        border: 0.8pt solid #000;
+        text-align: center;
+        font-size: 8pt;
+        line-height: 3.2mm;
+      }
+      .done .name {
+        text-decoration: line-through;
+      }
+      .qty {
+        margin-left: auto;
+        white-space: nowrap;
+        color: #444;
+      }
+      .facts {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1mm 6mm;
+        margin: 2mm 0 4mm;
+      }
+      .recipe-body {
+        display: flex;
+        gap: 8mm;
+      }
+      .ingredients {
+        flex: 0 0 36%;
+      }
+      .ingredients ul {
+        margin: 0;
+        padding-left: 4mm;
+      }
+      .steps {
+        flex: 1;
+      }
+      .steps ol {
+        margin: 0;
+        padding-left: 5mm;
+      }
+      .steps li {
+        margin-bottom: 2mm;
+      }
+      .settings {
+        display: block;
+        font-weight: bold;
+        font-size: 9.5pt;
+      }
+      .labels span {
+        display: inline-block;
+        border: 0.8pt solid #000;
+        border-radius: 2mm;
+        padding: 0.3mm 2mm;
+        margin: 0 1.5mm 1.5mm 0;
+        font-size: 9pt;
+      }
+      .note {
+        font-size: 9pt;
+        color: #444;
+      }
+    </style>
+  </head>
+  <body>
+    <section>
+      <h1 th:text="${doc.title}">Week of 23 November</h1>
+      <p class="muted" th:text="${doc.period}">23 November 2026 – 29 November 2026</p>
+      <table class="plan">
+        <tr th:each="day : ${doc.days}">
+          <th th:text="${day.date}">Monday 23 November</th>
+          <td>
+            <span class="meal" th:each="meal : ${day.meals}">
+              <span class="meal-name" th:text="${meal.meal}">Dinner</span><br />
+              <span th:text="${meal.recipe}">Chicken curry</span>
+              <span
+                class="muted"
+                th:text="'(' + #{pdf.servings(${meal.servings})} + ')'"
+                >(4 servings)</span
+              >
+            </span>
+          </td>
+        </tr>
+      </table>
+    </section>
+
+    <section class="page" th:if="${doc.shopping != null}">
+      <h2 th:text="#{pdf.shoppingList}">Shopping list</h2>
+      <p class="muted" th:text="${doc.shopping.title}">Groceries</p>
+      <div class="list">
+        <div class="aisle" th:each="aisle : ${doc.shopping.aisles}">
+          <h3 th:text="${aisle.name}">Produce</h3>
+          <ul class="items">
+            <li th:each="item : ${aisle.items}" th:classappend="${item.checked} ? 'done'">
+              <span class="box" th:text="${item.checked} ? '✓' : ''"></span>
+              <span class="name" th:text="${item.name}">Leeks</span>
+              <span class="qty" th:if="${item.quantity != null}" th:text="${item.quantity}">3</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" th:each="recipe : ${doc.recipes}">
+      <h2 th:text="${recipe.title}">Chicken curry</h2>
+      <p class="muted" th:if="${recipe.summary != null}" th:text="${recipe.summary}">Summary</p>
+      <div class="facts">
+        <span th:text="#{pdf.servings(${recipe.servings})}">4 servings</span>
+        <span
+          th:if="${recipe.activeMinutes != null}"
+          th:text="#{pdf.activeTime(${recipe.activeMinutes})}"
+          >Hands-on: 15 min</span
+        >
+        <span
+          th:if="${recipe.totalMinutes != null}"
+          th:text="#{pdf.totalTime(${recipe.totalMinutes})}"
+          >Total: 40 min</span
+        >
+        <span th:if="${recipe.appliance != null}" th:text="#{pdf.appliance(${recipe.appliance})}"
+          >Appliance: Speedi</span
+        >
+      </div>
+      <div class="recipe-body">
+        <div class="ingredients">
+          <h3 th:text="#{pdf.ingredients}">Ingredients</h3>
+          <ul>
+            <li th:each="ingredient : ${recipe.ingredients}">
+              <strong th:if="${ingredient.quantity != null}" th:text="${ingredient.quantity}"
+                >600 g</strong
+              >
+              <span th:text="${ingredient.name}">chicken</span>
+              <span class="note" th:if="${ingredient.note != null}" th:text="${ingredient.note}"
+                >diced</span
+              >
+            </li>
+          </ul>
+        </div>
+        <div class="steps">
+          <h3 th:text="#{pdf.steps}">Steps</h3>
+          <ol>
+            <li th:each="step : ${recipe.steps}">
+              <span class="settings" th:if="${step.settings != null}" th:text="${step.settings}"
+                >air_fry · 200 °C · 20 min</span
+              >
+              <span th:text="${step.text}">Cook.</span>
+            </li>
+          </ol>
+        </div>
+      </div>
+      <div th:if="${recipe.nutrition != null}">
+        <h3 th:text="#{pdf.nutrition}">Estimated nutrition, per serving</h3>
+        <p>
+          <span th:if="${recipe.nutrition.caloriesKcal != null}"
+                th:text="${recipe.nutrition.caloriesKcal} + ' kcal'">500 kcal</span>
+          <span th:if="${recipe.nutrition.proteinG != null}"
+                th:text="' · ' + #{pdf.protein(${recipe.nutrition.proteinG})}"> · protein 30 g</span>
+          <span th:if="${recipe.nutrition.carbsG != null}"
+                th:text="' · ' + #{pdf.carbs(${recipe.nutrition.carbsG})}"> · carbohydrates 40 g</span>
+          <span th:if="${recipe.nutrition.fatG != null}"
+                th:text="' · ' + #{pdf.fat(${recipe.nutrition.fatG})}"> · fat 20 g</span>
+          <span th:if="${recipe.nutrition.fiberG != null}"
+                th:text="' · ' + #{pdf.fiber(${recipe.nutrition.fiberG})}"> · fibre 8 g</span>
+        </p>
+      </div>
+      <div class="labels" th:if="${!recipe.benefits.isEmpty()}">
+        <h3 th:text="#{pdf.benefits}">Benefits</h3>
+        <span th:each="benefit : ${recipe.benefits}" th:text="${benefit}">High protein</span>
+      </div>
+      <p class="note" th:if="${recipe.source != null}" th:text="#{pdf.source(${recipe.source})}">
+        Source: …
+      </p>
+    </section>
+  </body>
+</html>

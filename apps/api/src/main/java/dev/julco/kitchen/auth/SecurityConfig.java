@@ -44,6 +44,9 @@ class SecurityConfig {
         http
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers("/actuator/health", "/actuator/health/**", "/error", "/api/csrf").permitAll()
+                        // Menu PDF links: the random token in the URL is the credential (opened from an
+                        // AI app, without a session). Unknown or expired token: 404.
+                        .requestMatchers(HttpMethod.GET, "/exports/*").permitAll()
                         // Passkey sign-in: the person is not authenticated yet.
                         .requestMatchers(HttpMethod.POST, "/webauthn/authenticate/options", "/login/webauthn")
                         .permitAll()
