@@ -9,7 +9,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.Instant;
 import java.util.UUID;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.type.SqlTypes;
@@ -44,7 +43,6 @@ public class SharedRecipe {
 
     private UUID publishedBy;
 
-    @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private Instant publishedAt;
 
@@ -71,6 +69,9 @@ public class SharedRecipe {
         this.language = language;
         this.content = content;
         this.signature = signature;
+        // Set here rather than by Hibernate at flush time: the tool result built right after
+        // saving must already carry it.
+        this.publishedAt = Instant.now();
         this.publishedBy = publishedBy;
     }
 

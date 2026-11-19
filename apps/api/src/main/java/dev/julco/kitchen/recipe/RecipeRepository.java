@@ -17,4 +17,6 @@ public interface RecipeRepository extends Repository<Recipe, UUID> {
     List<Recipe> findAllByHouseholdIdAndIdIn(UUID householdId, Collection<UUID> ids);
 
     Optional<Recipe> findFirstByHouseholdIdAndSharedRecipeId(UUID householdId, UUID sharedRecipeId);
+
+    void deleteByHouseholdIdAndId(UUID householdId, UUID id);
 }

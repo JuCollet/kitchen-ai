@@ -114,6 +114,29 @@ class RecipeTools {
     }
 
     @McpTool(
+            name = "delete_recipe",
+            title = "Delete a recipe",
+            description = """
+                    Deletes a recipe from the household's book, for example one saved by \
+                    mistake or a duplicate. Always in two calls. First call it without \
+                    confirmedByUser: nothing is deleted, and the result says what would go with \
+                    the recipe (its ratings, its meals in the household's menus, its publication \
+                    for other households). Tell the person, ask them to confirm explicitly, and \
+                    only after their yes call it again with confirmedByUser true. Never set \
+                    confirmedByUser true without that yes in this conversation. Copies other \
+                    households imported stay in their books.""",
+            annotations = @McpTool.McpAnnotations(
+                    title = "Delete a recipe", destructiveHint = true, readOnlyHint = false, idempotentHint = false,
+                    openWorldHint = false))
+    CallToolResult deleteRecipe(
+            @McpToolParam(description = "Recipe id, from search_recipes.") UUID recipeId,
+            @McpToolParam(required = false, description = "true only after the person explicitly confirmed the deletion.")
+                    Boolean confirmedByUser) {
+        return runner.run(NOT_FOUND, member ->
+                recipes.delete(member, recipeId, Boolean.TRUE.equals(confirmedByUser)));
+    }
+
+    @McpTool(
             name = "rate_recipe",
             title = "Rate a recipe",
             description = """
