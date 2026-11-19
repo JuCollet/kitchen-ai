@@ -212,7 +212,7 @@ public class RecipeService {
         BigDecimal householdScore = latest.isEmpty()
                 ? null
                 : BigDecimal.valueOf(latest.values().stream().mapToInt(RecipeRating::getScore).average().orElseThrow())
-                        .setScale(1, RoundingMode.HALF_UP);
+                        .setScale(2, RoundingMode.HALF_UP);
         ApplianceView appliance = recipe.getApplianceId() == null
                 ? null
                 : appliances.get(currentMember, recipe.getApplianceId());

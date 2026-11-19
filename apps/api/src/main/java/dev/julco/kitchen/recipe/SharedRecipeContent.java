@@ -16,4 +16,8 @@ public record SharedRecipeContent(
         List<RecipeStep> steps,
         List<String> tags,
         @JsonProperty("nutrition_estimate") NutritionEstimate nutritionEstimate,
-        List<String> benefits) {}
+        List<String> benefits,
+        String source,
+        // Brand and model of the origin appliance ("Ninja Speedi ON400"), never the name the
+        // household gave it; null for a classic recipe.
+        @JsonProperty("appliance_model") String applianceModel) {}

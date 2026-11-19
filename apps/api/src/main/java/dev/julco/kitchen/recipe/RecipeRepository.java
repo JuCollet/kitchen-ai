@@ -15,4 +15,6 @@ public interface RecipeRepository extends Repository<Recipe, UUID> {
     List<Recipe> findAllByHouseholdIdOrderByTitle(UUID householdId);
 
     List<Recipe> findAllByHouseholdIdAndIdIn(UUID householdId, Collection<UUID> ids);
+
+    Optional<Recipe> findFirstByHouseholdIdAndSharedRecipeId(UUID householdId, UUID sharedRecipeId);
 }

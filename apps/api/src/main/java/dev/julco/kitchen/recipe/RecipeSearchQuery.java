@@ -71,7 +71,7 @@ class RecipeSearchQuery {
                 ),
                 scores as (
                     select recipe_id,
-                           round(avg(score), 1) as household_score,
+                           round(avg(score), 2) as household_score,
                            count(*) as rater_count,
                            max(score) filter (where user_id = :userId) as my_score
                     from latest

@@ -97,7 +97,9 @@ class RecipeTools {
             @McpToolParam(required = false, description = "Total time in minutes, waiting included.") Integer totalMinutes,
             @McpToolParam(description = "Ingredients, 1 to 60.") List<IngredientInput> ingredients,
             @McpToolParam(description = "Steps in order, 1 to 40.") List<RecipeStep> steps,
-            @McpToolParam(required = false, description = "Lowercase tags, for example 'quick', 'vegetarian', 'batch cooking'. Max 20.")
+            @McpToolParam(required = false, description = "Lowercase tags, max 20. Always include exactly one course tag: "
+                    + "main, starter, side, soup, salad, dessert, baking, breakfast, snack, drink or sauce; then any "
+                    + "other, for example 'quick', 'vegetarian', 'batch cooking'.")
                     List<String> tags,
             @McpToolParam(required = false, description = "Estimated nutrition per serving.") NutritionEstimate nutritionEstimate,
             @McpToolParam(required = false, description = "Benefit labels, for example 'high protein', 'rich in fibre'. Max 10.")
