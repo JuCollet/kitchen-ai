@@ -12,9 +12,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.type.SqlTypes;
 
@@ -76,11 +74,9 @@ public class Recipe implements HouseholdScoped {
 
     private UUID sharedRecipeId;
 
-    @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
 
-    @UpdateTimestamp
     @Column(nullable = false)
     private Instant updatedAt;
 
@@ -103,6 +99,10 @@ public class Recipe implements HouseholdScoped {
         this.ingredients = new ArrayList<>(ingredients);
         this.steps = new ArrayList<>(steps);
         this.language = language;
+        // Set here rather than by Hibernate at flush time: the tool result built right after
+        // saving must already carry it.
+        this.createdAt = Instant.now();
+        this.updatedAt = this.createdAt;
     }
 
     public UUID getId() {
@@ -195,6 +195,7 @@ public class Recipe implements HouseholdScoped {
     void edit(RecipeContent content) {
         apply(content);
         version++;
+        updatedAt = Instant.now();
     }
 
     /** Fields set at creation, then by {@link #edit}. */

@@ -42,6 +42,8 @@ public class RecipeService {
     private final RecipeRepository recipes;
     private final RecipeRatingRepository ratings;
     private final RecipeSearchQuery searchQuery;
+    private final RecipeUsageQuery usage;
+    private final SharedRecipeRepository shared;
     private final ApplianceService appliances;
     private final HouseholdService households;
 
@@ -49,11 +51,15 @@ public class RecipeService {
             RecipeRepository recipes,
             RecipeRatingRepository ratings,
             RecipeSearchQuery searchQuery,
+            RecipeUsageQuery usage,
+            SharedRecipeRepository shared,
             ApplianceService appliances,
             HouseholdService households) {
         this.recipes = recipes;
         this.ratings = ratings;
         this.searchQuery = searchQuery;
+        this.usage = usage;
+        this.shared = shared;
         this.appliances = appliances;
         this.households = households;
     }
@@ -120,6 +126,34 @@ public class RecipeService {
         return recipes.findAllByHouseholdIdAndIdIn(currentMember.householdId(), recipeIds).stream()
                 .collect(Collectors.toMap(Recipe::getId, recipe -> new RecipeBrief(
                         recipe.getId(), recipe.getTitle(), recipe.getApplianceId(), recipe.getServings())));
+    }
+
+    /**
+     * Deletes a recipe of the household, in two steps. Without confirmation, nothing is deleted:
+     * the result says what would go with it, for the AI to show the person. With confirmation (the
+     * person said yes), the recipe goes with its ratings (database cascade) and its meals in the
+     * household's menus, and its publication is withdrawn; copies other households imported stay
+     * theirs. A recipe of another household is a 404 at both steps (CLAUDE.md rule 2).
+     */
+    public RecipeDeletion delete(@NotNull CurrentMember currentMember, @NotNull UUID recipeId, boolean confirmedByUser) {
+        Recipe recipe = find(currentMember, recipeId);
+        UUID householdId = currentMember.householdId();
+        int ratingCount = usage.ratings(householdId, recipe.getId());
+        int meals = usage.menuMeals(householdId, recipe.getId());
+        boolean published = shared
+                .findBySourceRecipeIdAndOriginHouseholdIdAndWithdrawnAtIsNull(recipe.getId(), householdId)
+                .isPresent();
+        if (!confirmedByUser) {
+            return new RecipeDeletion(recipe.getId(), recipe.getTitle(), false, ratingCount, meals, published,
+                    "Nothing was deleted. Tell the person what deleting this recipe removes (its ratings, its "
+                            + "meals in menus, its publication), ask them to confirm explicitly, then call "
+                            + "delete_recipe again with confirmedByUser true.");
+        }
+        usage.deleteMenuMeals(householdId, recipe.getId());
+        shared.withdrawLive(recipe.getId(), householdId, Instant.now());
+        recipes.deleteByHouseholdIdAndId(householdId, recipe.getId());
+        return new RecipeDeletion(recipe.getId(), recipe.getTitle(), true, ratingCount, meals, published,
+                "The recipe was deleted.");
     }
 
     private Recipe find(CurrentMember currentMember, UUID recipeId) {

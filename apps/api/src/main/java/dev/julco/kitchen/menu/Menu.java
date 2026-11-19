@@ -8,7 +8,6 @@ import jakarta.persistence.Table;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.UUID;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.type.SqlTypes;
@@ -39,7 +38,6 @@ public class Menu implements HouseholdScoped {
 
     private UUID createdBy;
 
-    @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
 
@@ -51,6 +49,9 @@ public class Menu implements HouseholdScoped {
         this.startsOn = startsOn;
         this.endsOn = endsOn;
         this.createdBy = createdBy;
+        // Set here rather than by Hibernate at flush time: the tool result built right after
+        // saving must already carry it.
+        this.createdAt = Instant.now();
     }
 
     /** Replaces the whole menu (its items are replaced by the service). */
