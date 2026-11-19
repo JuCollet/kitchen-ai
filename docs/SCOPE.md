@@ -65,6 +65,7 @@ Kitchen (kitchen.julco.dev) is a cooking assistant **with no chat interface of i
 - **Shopping list widget (MCP App)**: list grouped by aisle, checkable with one tap, **synchronised** between household members and between AIs. For clients without MCP Apps, the tool also returns a link to a **fallback web page** showing the same list.
 - **Menu PDF** to download, nicely laid out, printable in black and white: meal plan, shopping list by aisle with checkboxes, one sheet per recipe (ingredients, steps, appliance settings, times, estimated nutrition) with **benefit labels**. Generated in the language of the person who requests it, served through a signed, temporary link.
 - **Minimal website**: home page, "Connect your AI" guide per client, "My account" page (see your data, manage the household and invitations, export your data, delete your account).
+- **Newsletter**: at sign-up, people are invited (never forced) to subscribe to a newsletter that sends tips to get the most out of Kitchen over time and announces new features. In their language; unsubscribe in one click (decision of 19 November 2026).
 
 ### Store
 
@@ -73,7 +74,7 @@ Kitchen (kitchen.julco.dev) is a cooking assistant **with no chat interface of i
 ## Out of v1
 
 - Store promotions (Delhaize or others)
-- Reminders and notifications (the AI never takes the initiative; we observe whether usage holds without them)
+- Reminders and notifications (the AI never takes the initiative; we observe whether usage holds without them; the newsletter is not one: it is opt-in, by email, about Kitchen itself, never about the household's data)
 - Appliance catalogue shared between households (could emerge from validated sheets)
 - Several households per person
 - Public launch (communication, listing in connector directories)

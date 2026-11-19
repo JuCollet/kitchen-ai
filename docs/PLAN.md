@@ -272,7 +272,7 @@ The message a prompt returns (`prompts/get`) is written in the person's language
 | `/` | public | The concept, the "Get started" button |
 | `/connect` | public | Step-by-step guide per client (Claude, ChatGPT, other), URL to copy |
 | `/sign-in` | public | Google, passkey; also used by the AIs' OAuth flow |
-| `/consent` | signed in | Authorising an AI; consent for health data (unticked box, phase 6); acceptance of the privacy policy at first sign-in |
+| `/consent` | signed in | Authorising an AI; consent for health data (unticked box, phase 6); acceptance of the privacy policy at first sign-in; invitation to subscribe to the newsletter at sign-up (phase 12) |
 | `/join#<token>` | public then signed in | Join a household by invitation. The token is in the URL fragment, which browsers never send to a server, so it cannot end up in access logs |
 | `/account` | signed in | My data, my household and its members, invite, connected AIs (revocation), passkeys, JSON export, account deletion (export, deletion and revocation in phase 14, the page's final layout in phase 12) |
 | `/list/:id` | household member | Shopping list fallback page |
@@ -286,6 +286,7 @@ Site API under `/api` (session), documented with OpenAPI; the TypeScript client 
 - Privacy policy: controller, data, purposes, hosting (Belgium), encrypted backups at Backblaze B2 (EU region), retention periods, rights.
 - Full JSON export of one's data; account deletion with token revocation. If the person is the last member of the household, the household is deleted; otherwise the recipes stay with the household.
 - No third-party analytics, no cookie other than the session.
+- **Newsletter** (decision of 19 November 2026, to build in phase 12): at sign-up, Kitchen invites the person to subscribe, with the benefits spelled out (tips to get the most out of Kitchen, sent over time, and announcements of new features). Encouraged, never forced: an unticked box, separate from the privacy policy acceptance (GDPR: consent is free, specific and as easy to withdraw as to give). Stored as a dated consent (`newsletter_consent_at`), withdrawn from "My account" or from the unsubscribe link of every email (one click, no sign-in). Emails in the person's language (FR, NL, EN); only the email address and language are shared with the sending service. **[to verify]** Sending service: self-hosted in the cluster (for example listmonk, with an SMTP relay) or an EU-hosted provider (for example Brevo); either way named in the privacy policy as a processor. Withdrawing the consent, or deleting the account, removes the person from the list.
 
 ## 9. Phases
 
@@ -307,7 +308,7 @@ Each phase ends with green tests, a review by Julien and a docs update if needed
 | 9 | Shopping list: final widget, fallback page, transfer to the pantry | You in Claude and another member in ChatGPT check the same list |
 | 10 | PDF export with Gotenberg | PDF printed, readable in black and white |
 | 11 | Sharing between households | A recipe published by one household is imported and rated by another |
-| 12 | Website: home, connection guide, account page layout, legal pages, assets (logo, visuals), i18n (done after 14) | A newly invited friend completes the whole journey without help |
+| 12 | Website: home, connection guide, account page layout, legal pages, assets (logo, visuals), newsletter sign-up (§8), i18n (done after 14) | A newly invited friend completes the whole journey without help |
 | 13 | Deployment on k3s through ArgoCD | `kitchen.julco.dev` over HTTPS, deployment by commit, B2 restore tested |
 | 14 | Hardening and GDPR: rate limiting, headers, security checklist; JSON export, account deletion and revocation of connected AIs (API and plain controls on the account page) | Checklist done, account deletion verified in the database |
 | 15 | Beta with test households | `SCOPE.md` success criterion |
