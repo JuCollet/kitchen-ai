@@ -11,6 +11,7 @@ import dev.julco.kitchen.household.HouseholdService;
 import dev.julco.kitchen.household.MemberSummary;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Instant;
@@ -39,10 +40,16 @@ import org.springframework.validation.annotation.Validated;
 @Transactional
 public class RecipeService {
 
+    /** How many versions of a recipe are kept (CLAUDE.md rule 4: bounded). */
+    static final int MAX_VERSIONS = 50;
+
+    static final int MAX_CHANGE_NOTE = 300;
+
     private final RecipeRepository recipes;
     private final RecipeRatingRepository ratings;
     private final RecipeSearchQuery searchQuery;
     private final RecipeUsageQuery usage;
+    private final RecipeVersionRepository versions;
     private final SharedRecipeRepository shared;
     private final ApplianceService appliances;
     private final HouseholdService households;
@@ -52,6 +59,7 @@ public class RecipeService {
             RecipeRatingRepository ratings,
             RecipeSearchQuery searchQuery,
             RecipeUsageQuery usage,
+            RecipeVersionRepository versions,
             SharedRecipeRepository shared,
             ApplianceService appliances,
             HouseholdService households) {
@@ -59,6 +67,7 @@ public class RecipeService {
         this.ratings = ratings;
         this.searchQuery = searchQuery;
         this.usage = usage;
+        this.versions = versions;
         this.shared = shared;
         this.appliances = appliances;
         this.households = households;
@@ -66,6 +75,99 @@ public class RecipeService {
 
     /** Creates a recipe, or edits one ({@code id} set): an edit is a new version. */
     public RecipeDetail save(@NotNull CurrentMember currentMember, @NotNull @Valid RecipeInput input) {
+        return persist(currentMember, input, null);
+    }
+
+    /**
+     * Same, with a note saying what changed ("olive oil replaced by rapeseed oil"), kept in the
+     * recipe's history.
+     */
+    public RecipeDetail save(
+            @NotNull CurrentMember currentMember,
+            @NotNull @Valid RecipeInput input,
+            @Size(max = MAX_CHANGE_NOTE) String changeNote) {
+        return persist(currentMember, input, changeNote);
+    }
+
+    /**
+     * Goes back to an earlier version: its content is saved again as a new version (history is
+     * never rewritten, and ratings stay attached to the versions they judged). It goes through the
+     * same checks as any save: if the appliance's sheet changed since, an old mode is refused with
+     * the real ones (CLAUDE.md rule 5).
+     */
+    public RecipeDetail restore(@NotNull CurrentMember currentMember, @NotNull UUID recipeId, int version) {
+        Recipe recipe = find(currentMember, recipeId);
+        if (version == recipe.getVersion()) {
+            throw new InvalidInputException("Version " + version + " is already the current version.");
+        }
+        RecipeSnapshot old = versions.findByHouseholdIdAndRecipeIdAndVersion(currentMember.householdId(), recipeId, version)
+                .orElseThrow(() -> new InvalidInputException("Version " + version
+                        + " of this recipe is not kept: use list_recipe_versions to see the available versions."))
+                .getContent();
+        RecipeInput input = new RecipeInput(
+                recipeId,
+                old.applianceId(),
+                old.title(),
+                old.summary(),
+                (int) old.servings(),
+                old.activeMinutes() == null ? null : old.activeMinutes().intValue(),
+                old.totalMinutes() == null ? null : old.totalMinutes().intValue(),
+                old.ingredients().stream()
+                        .map(i -> new IngredientInput(i.name(), i.quantity(), i.unit(), i.aisle().code(), i.note()))
+                        .toList(),
+                old.steps(),
+                old.tags(),
+                old.nutritionEstimate(),
+                old.benefits(),
+                old.language(),
+                old.source());
+        return persist(currentMember, input, "Restored version " + version);
+    }
+
+    /** The recipe's kept versions, latest first, each with how it was rated. */
+    @Transactional(readOnly = true)
+    public RecipeVersionsView versions(@NotNull CurrentMember currentMember, @NotNull UUID recipeId) {
+        Recipe recipe = find(currentMember, recipeId);
+        Map<UUID, String> names = memberNames(currentMember);
+        // Latest rating of each member, per version (the history is sorted latest first).
+        Map<Integer, Map<UUID, Integer>> scores = new LinkedHashMap<>();
+        ratings.findAllByHouseholdIdAndRecipeIdOrderByCookedAtDescIdDesc(currentMember.householdId(), recipeId)
+                .forEach(rating -> scores
+                        .computeIfAbsent(rating.getRecipeVersion(), ignored -> new LinkedHashMap<>())
+                        .putIfAbsent(rating.getUserId(), (int) rating.getScore()));
+        List<RecipeVersionsView.Version> list = versions
+                .findAllByHouseholdIdAndRecipeIdOrderByVersionDesc(currentMember.householdId(), recipeId).stream()
+                .map(v -> {
+                    Map<UUID, Integer> byMember = scores.getOrDefault(v.getVersion(), Map.of());
+                    BigDecimal score = byMember.isEmpty()
+                            ? null
+                            : BigDecimal.valueOf(byMember.values().stream().mapToInt(Integer::intValue).average().orElseThrow())
+                                    .setScale(2, RoundingMode.HALF_UP);
+                    return new RecipeVersionsView.Version(
+                            v.getVersion(),
+                            v.getVersion() == recipe.getVersion(),
+                            v.getContent().title(),
+                            v.getChangeNote(),
+                            v.getCreatedBy() == null ? null : names.get(v.getCreatedBy()),
+                            v.getCreatedAt(),
+                            score,
+                            byMember.size());
+                })
+                .toList();
+        return new RecipeVersionsView(recipe.getId(), recipe.getTitle(), recipe.getVersion(), list);
+    }
+
+    @Transactional(readOnly = true)
+    public RecipeVersionDetail version(@NotNull CurrentMember currentMember, @NotNull UUID recipeId, int version) {
+        Recipe recipe = find(currentMember, recipeId);
+        RecipeVersion v = versions.findByHouseholdIdAndRecipeIdAndVersion(currentMember.householdId(), recipeId, version)
+                .orElseThrow(() -> new InvalidInputException("Version " + version
+                        + " of this recipe is not kept: use list_recipe_versions to see the available versions."));
+        return new RecipeVersionDetail(recipeId, version, version == recipe.getVersion(), v.getChangeNote(),
+                v.getCreatedAt(), v.getContent());
+    }
+
+    private RecipeDetail persist(CurrentMember currentMember, RecipeInput input, String changeNote) {
         RecipeContent content = content(currentMember, input);
         Recipe recipe;
         if (input.id() == null) {
@@ -83,7 +185,19 @@ public class RecipeService {
             recipe = find(currentMember, input.id());
             recipe.edit(content);
         }
-        return detail(currentMember, recipes.save(recipe));
+        Recipe saved = recipes.save(recipe);
+        keepVersion(currentMember, saved, content, changeNote);
+        return detail(currentMember, saved);
+    }
+
+    /** Every saved version is kept, up to the last {@value #MAX_VERSIONS}. */
+    private void keepVersion(CurrentMember currentMember, Recipe recipe, RecipeContent content, String changeNote) {
+        versions.save(new RecipeVersion(currentMember.householdId(), recipe.getId(), recipe.getVersion(),
+                RecipeSnapshot.of(content), blankToNull(changeNote), currentMember.userId()));
+        if (recipe.getVersion() > MAX_VERSIONS) {
+            versions.deleteOlderByHouseholdId(currentMember.householdId(), recipe.getId(),
+                    recipe.getVersion() - MAX_VERSIONS + 1);
+        }
     }
 
     @Transactional(readOnly = true)

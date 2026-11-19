@@ -107,10 +107,61 @@ class RecipeTools {
             @McpToolParam(required = false, description = "Language the recipe is written in: fr, nl or en. Defaults to the person's.")
                     String language,
             @McpToolParam(required = false, description = "Where the recipe comes from: URL, book, person. Max 500 characters.")
-                    String source) {
+                    String source,
+            @McpToolParam(required = false, description = "When editing: what changed, in a few words, for the recipe's "
+                    + "history, for example 'olive oil replaced by rapeseed oil'. Max 300 characters.")
+                    String changeNote) {
         return runner.run(NOT_FOUND, member -> recipes.save(member, new RecipeInput(
                 id, applianceId, title, summary, servings, activeMinutes, totalMinutes, ingredients, steps, tags,
-                nutritionEstimate, benefits, language(language), source)));
+                nutritionEstimate, benefits, language(language), source), changeNote));
+    }
+
+    @McpTool(
+            name = "list_recipe_versions",
+            title = "Show a recipe's history",
+            description = """
+                    Lists the saved versions of a recipe of the household, latest first (up to \
+                    the last 50): version number, what changed (changeNote), who saved it and \
+                    when, and how that version was rated (average of each member's latest \
+                    rating of it, with ratingCount). Use it to compare versions and to find the \
+                    best one, then get_recipe_version to read one in full.""",
+            annotations = @McpTool.McpAnnotations(
+                    title = "Show a recipe's history", readOnlyHint = true, destructiveHint = false,
+                    idempotentHint = true, openWorldHint = false))
+    CallToolResult listRecipeVersions(
+            @McpToolParam(description = "Recipe id, from search_recipes.") UUID recipeId) {
+        return runner.run(NOT_FOUND, member -> recipes.versions(member, recipeId));
+    }
+
+    @McpTool(
+            name = "get_recipe_version",
+            title = "Read an earlier version of a recipe",
+            description = """
+                    Returns one saved version of a recipe of the household in full (ingredients, \
+                    steps, times…), as it was, with its change note. Use it to show the person \
+                    what an earlier version looked like before going back to it.""",
+            annotations = @McpTool.McpAnnotations(
+                    title = "Read an earlier version of a recipe", readOnlyHint = true, destructiveHint = false,
+                    idempotentHint = true, openWorldHint = false))
+    CallToolResult getRecipeVersion(
+            @McpToolParam(description = "Recipe id, from search_recipes.") UUID recipeId,
+            @McpToolParam(description = "Version number, from list_recipe_versions.") int version) {
+        return runner.run(NOT_FOUND, member -> recipes.version(member, recipeId, version));
+    }
+
+    @McpTool(
+            name = "restore_recipe_version",
+            title = "Go back to an earlier version of a recipe",
+            description = """
+                    Makes an earlier version of a recipe the current one again, when the person \
+                    asks to undo a change ('the rapeseed oil was not good, go back'). Nothing is \
+                    lost: the old content is saved as a new version, the versions in between \
+                    stay in the history, and ratings stay attached to the versions they judged. \
+                    The appliance rules apply as for save_recipe. Returns the recipe.""")
+    CallToolResult restoreRecipeVersion(
+            @McpToolParam(description = "Recipe id, from search_recipes.") UUID recipeId,
+            @McpToolParam(description = "Version number to go back to, from list_recipe_versions.") int version) {
+        return runner.run(NOT_FOUND, member -> recipes.restore(member, recipeId, version));
     }
 
     @McpTool(
