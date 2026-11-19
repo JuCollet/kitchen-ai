@@ -187,6 +187,11 @@ public class Recipe implements HouseholdScoped {
     }
 
     /** Everything the household can edit at once. Each edit is a new version of the recipe. */
+    /** This recipe is a copy of a recipe shared by another household. */
+    void importedFrom(UUID sharedRecipeId) {
+        this.sharedRecipeId = sharedRecipeId;
+    }
+
     void edit(RecipeContent content) {
         apply(content);
         version++;

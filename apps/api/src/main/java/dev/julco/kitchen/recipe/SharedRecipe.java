@@ -50,6 +50,11 @@ public class SharedRecipe {
 
     private Instant withdrawnAt;
 
+    /** Null: anonymous. */
+    @Enumerated(EnumType.STRING)
+    @Column(updatable = false)
+    private Signature signature;
+
     protected SharedRecipe() {}
 
     public SharedRecipe(
@@ -58,13 +63,19 @@ public class SharedRecipe {
             String title,
             Language language,
             SharedRecipeContent content,
-            UUID publishedBy) {
+            UUID publishedBy,
+            Signature signature) {
         this.originHouseholdId = originHouseholdId;
         this.sourceRecipeId = sourceRecipeId;
         this.title = title;
         this.language = language;
         this.content = content;
+        this.signature = signature;
         this.publishedBy = publishedBy;
+    }
+
+    void withdraw(Instant at) {
+        this.withdrawnAt = at;
     }
 
     public UUID getId() {
@@ -97,6 +108,10 @@ public class SharedRecipe {
 
     public Instant getPublishedAt() {
         return publishedAt;
+    }
+
+    public Signature getSignature() {
+        return signature;
     }
 
     public Instant getWithdrawnAt() {

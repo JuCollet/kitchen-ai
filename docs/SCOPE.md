@@ -54,11 +54,11 @@ Kitchen (kitchen.julco.dev) is a cooking assistant **with no chat interface of i
   - **Recipe of the day**: a suggestion for tonight;
   - **Rate a recipe**: feedback after cooking, rating out of 10 and adjustments;
   - **Clear the fridge**: a recipe using what is left in the pantry.
-- **Recipes**: creation, editing, precise search, rating history. Rating out of 10 per person (9 = perfect, nothing to change; 10 = reserved for the best recipe ever tasted).
+- **Recipes**: creation, editing, precise search, rating history. The book keeps every recipe the household cares about, menus or not (desserts, cakes, drinks, recipes for guests): each recipe carries one course tag (`main`, `dessert`, `baking`…), and menus only use main courses unless asked (decision of 19 November 2026, phase 11). Rating out of 10 per person (9 = perfect, nothing to change; 10 = reserved for the best recipe ever tasted).
 - **Import**: **the AI does the import**. It reads the source with its own tools (URL, pasted text, Notion page through its connector…), structures the recipe and saves it. Nothing to parse on the server side.
 - **Semi-automatic pantry**: items checked on the shopping list go into the pantry; when a recipe is rated, the AI offers to remove what was used; it can also be corrected in conversation. Following menus reuse what is left.
 - **Nutrition**: an indicative estimate provided by the AI, always presented as such.
-- **Voluntary sharing between households**: a household can publish a recipe; other households can discover it (with its average rating) and import it into their book.
+- **Voluntary sharing between households**: a household can publish a recipe; other households can discover it (with its average rating) and import it into their book. A publication is anonymous by default; the person who publishes it may sign it with the household's name or their own, so that friends can look up the recipes of a given household or person (decision of 19 November 2026, phase 11).
 
 ### Provided by Kitchen
 
