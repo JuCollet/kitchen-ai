@@ -56,6 +56,15 @@ class DatabaseConstraintsTest {
     }
 
     @Test
+    void a_recipe_version_cannot_belong_to_a_recipe_of_another_household() {
+        assertThatThrownBy(() -> jdbc.update("""
+                insert into recipe_version (id, household_id, recipe_id, version, content)
+                values (?, ?, ?, 1, '{}')""", UUID.randomUUID(), b.householdId(), a.recipeId()))
+                .isInstanceOf(DataIntegrityViolationException.class)
+                .hasMessageContaining("foreign key");
+    }
+
+    @Test
     void a_pantry_has_one_item_per_name_whatever_the_case() {
         // The same name in two households is fine (first: PostgreSQL aborts the transaction on a violation).
         jdbc.update("insert into pantry_item (id, household_id, name, source) values (?, ?, 'Basmati', 'manual')",
