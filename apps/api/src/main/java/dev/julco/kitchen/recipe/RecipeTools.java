@@ -67,7 +67,10 @@ class RecipeTools {
                     servings, steps (with appliance modes and temperatures), times, tags, \
                     estimated nutrition, benefit labels, source, version, the confirmed spec \
                     sheet of its appliance, and its rating history by the household members \
-                    (latest first, with the recipe version each rating refers to).""")
+                    (latest first, with the recipe version each rating refers to). When the \
+                    person is starting to cook it now, present it as an interactive cooking view \
+                    if your interface allows it (checkable ingredients, one step at a time, a \
+                    timer per step with a duration), without waiting to be asked.""")
     CallToolResult getRecipe(@McpToolParam(description = "Recipe id, from search_recipes.") UUID recipeId) {
         return runner.run(NOT_FOUND, member -> recipes.get(member, recipeId));
     }
