@@ -274,7 +274,7 @@ The message a prompt returns (`prompts/get`) is written in the person's language
 | `/sign-in` | public | Google, passkey; also used by the AIs' OAuth flow |
 | `/consent` | signed in | Authorising an AI; consent for health data (unticked box, phase 6); acceptance of the privacy policy at first sign-in |
 | `/join#<token>` | public then signed in | Join a household by invitation. The token is in the URL fragment, which browsers never send to a server, so it cannot end up in access logs |
-| `/account` | signed in | My data, my household and its members, invite, connected AIs (revocation), passkeys, JSON export, account deletion |
+| `/account` | signed in | My data, my household and its members, invite, connected AIs (revocation), passkeys, JSON export, account deletion (export, deletion and revocation in phase 14, the page's final layout in phase 12) |
 | `/list/:id` | household member | Shopping list fallback page |
 | `/privacy`, `/terms` | public | Legal texts |
 
@@ -291,6 +291,8 @@ Site API under `/api` (session), documented with OpenAPI; the TypeScript client 
 
 Each phase ends with green tests, a review by Julien and a docs update if needed. Phases 4 and 5 remove the two major technical risks before writing business logic.
 
+**Order after phase 11** (decision of 19 November 2026): 13 (done), then **14, then 12, then 15**. The website comes after hardening because its assets (logo, visuals) take time; the beta needs the website (connection guide), so 12 stays before 15. The GDPR and security parts of the account page (JSON export, account deletion, revocation of connected AIs) move from 12 to 14, with plain controls on the existing account page.
+
 | # | Phase | Done when |
 |---|---|---|
 | 0 | Mini PC infrastructure (see `INFRA.md`), in parallel | k3s, ArgoCD, Postgres and tunnel operational |
@@ -305,9 +307,9 @@ Each phase ends with green tests, a review by Julien and a docs update if needed
 | 9 | Shopping list: final widget, fallback page, transfer to the pantry | You in Claude and another member in ChatGPT check the same list |
 | 10 | PDF export with Gotenberg | PDF printed, readable in black and white |
 | 11 | Sharing between households | A recipe published by one household is imported and rated by another |
-| 12 | Website: home, guide, account, export, deletion, i18n | A newly invited friend completes the whole journey without help |
+| 12 | Website: home, connection guide, account page layout, legal pages, assets (logo, visuals), i18n (done after 14) | A newly invited friend completes the whole journey without help |
 | 13 | Deployment on k3s through ArgoCD | `kitchen.julco.dev` over HTTPS, deployment by commit, B2 restore tested |
-| 14 | Hardening and GDPR: rate limiting, headers, security checklist | Checklist done, account deletion verified in the database |
+| 14 | Hardening and GDPR: rate limiting, headers, security checklist; JSON export, account deletion and revocation of connected AIs (API and plain controls on the account page) | Checklist done, account deletion verified in the database |
 | 15 | Beta with test households | `SCOPE.md` success criterion |
 
 ## 10. Testing strategy
