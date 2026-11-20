@@ -46,8 +46,8 @@
     "healthDataTitle": "Allergieën en intoleranties",
     "healthDataOff": "Kitchen bewaart uw allergieën en intoleranties niet. Als u het toestaat, zijn ze zichtbaar voor de andere leden van uw huishouden en hun AI’s, zodat de menu’s van het huishouden veilig zijn voor u.",
     "healthDataOn": "Kitchen bewaart uw allergieën en intoleranties en deelt ze met de andere leden van uw huishouden en hun AI’s.",
-    "allowHealthData": "Kitchen toestaan ze te bewaren",
-    "withdrawHealthData": "Toestemming intrekken en ze wissen",
+    "allowHealthData": "Opslaan toestaan",
+    "withdrawHealthData": "Intrekken en wissen",
     "signOutFailed": "Afmelden is mislukt: u bent nog steeds aangemeld. Probeer opnieuw."
   },
   "join": {
