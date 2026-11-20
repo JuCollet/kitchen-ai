@@ -15,7 +15,7 @@
   "signIn": {
     "title": "Connexion",
     "intro": "Votre compte Kitchen se crée avec Google. Vous pourrez ensuite ajouter une passkey pour vous connecter sans Google.",
-    "google": "Continuer avec Google",
+    "google": "Se connecter",
     "passkey": "Se connecter avec une passkey",
     "failed": "La connexion a échoué. Réessayez.",
     "passkeyFailed": "La connexion par passkey a échoué."

@@ -28,7 +28,7 @@ describe('AppRoutes', () => {
       </MemoryRouter>,
     )
 
-    expect(screen.getByRole('link', { name: 'Continuer avec Google' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'Se connecter' })).toHaveAttribute(
       'href',
       '/oauth2/authorization/google',
     )

@@ -14,7 +14,7 @@ function LogoLink() {
   )
 }
 
-/** The logo at the top of a page whose content is long (the shopping list). */
+/** The logo at the top of every page but the home page. */
 export function SiteHeader() {
   return (
     <header className="flex justify-center px-4 pt-8">
@@ -24,19 +24,29 @@ export function SiteHeader() {
 }
 
 /**
- * The site's pages: one block centred in the page, everything centred. The same space separates
- * the logo from the text and the text from the first button (gap-6 plus the extra margins).
+ * The site's pages: the logo at the top, then one block centred in the rest of the page, its
+ * text centred. Buttons keep their natural width; the first one after the text gets extra space.
  */
-export function PageShell({ title, children }: { title: string; children: ReactNode }) {
+export function PageShell({
+  title,
+  children,
+  footer,
+}: {
+  title: string
+  children: ReactNode
+  /** A discreet secondary choice, centred at the bottom of the page. */
+  footer?: ReactNode
+}) {
   return (
-    <main className="flex min-h-svh flex-col justify-center px-4 py-12">
-      <div className="mx-auto flex w-full max-w-md flex-col gap-6 text-center [&>:not([data-slot=button])+[data-slot=button]]:mt-4">
-        <div className="mb-4 flex justify-center">
-          <LogoLink />
+    <div className="flex min-h-svh flex-col">
+      <SiteHeader />
+      <main className="flex flex-1 flex-col justify-center px-4 py-12">
+        <div className="mx-auto flex w-full max-w-md flex-col items-center gap-6 text-center [&>:not([data-slot=button])]:w-full [&>:not([data-slot=button])+[data-slot=button]]:mt-4">
+          <h1 className="text-4xl">{title}</h1>
+          {children}
         </div>
-        <h1 className="text-4xl">{title}</h1>
-        {children}
-      </div>
-    </main>
+      </main>
+      {footer && <footer className="flex justify-center px-4 pb-8">{footer}</footer>}
+    </div>
   )
 }
