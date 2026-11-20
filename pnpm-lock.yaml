@@ -181,6 +181,12 @@ importers:
 
   apps/web:
     dependencies:
+      '@fontsource/inter':
+        specifier: 5.3.0
+        version: 5.3.0
+      '@fontsource/kiwi-maru':
+        specifier: 5.3.1
+        version: 5.3.1
       '@kitchen/shopping-list':
         specifier: workspace:*
         version: link:../../packages/shopping-list
@@ -493,6 +499,12 @@ packages:
 
   '@floating-ui/utils@0.2.12':
     resolution: {integrity: sha512-HpCo8tmWzLVad5s2d19EhAz5zqrrQ6s69qd6moPMQvkOuSwDT1YgRfWSVuc4ennqrgv3OHppiOGMQ7oC13yIww==}
+
+  '@fontsource/inter@5.3.0':
+    resolution: {integrity: sha512-RofMylZmjlJEfELXeNHFWBRcSs75rGU/6bV2S2jfnvv/3rPXPGe0LgUJTklcHZ9lM4OZmAVFhcJPnACfb91A3g==}
+
+  '@fontsource/kiwi-maru@5.3.1':
+    resolution: {integrity: sha512-FTup3q1lifmroaQUMC1BC2HwFG0X7jSO80PlqTQUIYIYRag0setwHTsIQsRzxNZUwfrlK8pNyEdQ8A1mPoLuYw==}
 
   '@jridgewell/gen-mapping@0.3.13':
     resolution: {integrity: sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA==}
@@ -3369,6 +3381,10 @@ snapshots:
       react-dom: 19.3.1(react@19.3.1)
 
   '@floating-ui/utils@0.2.12': {}
+
+  '@fontsource/inter@5.3.0': {}
+
+  '@fontsource/kiwi-maru@5.3.1': {}
 
   '@jridgewell/gen-mapping@0.3.13':
     dependencies:

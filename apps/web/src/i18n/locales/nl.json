@@ -8,8 +8,9 @@
     "tooLong": "Te lang"
   },
   "home": {
-    "tagline": "Je receptenboek en kookgeschiedenis, nauwkeurig en blijvend, gedeeld met je huishouden, bruikbaar vanuit elke AI.",
-    "start": "Aan de slag"
+    "tagline": "Je recepten, je menu's en je boodschappenlijst, gedeeld met je dierbaren, vanuit je favoriete AI-assistent.",
+    "start": "Aan de slag",
+    "worksWith": "Werkt met"
   },
   "signIn": {
     "title": "Aanmelden",

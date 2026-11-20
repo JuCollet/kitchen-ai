@@ -8,8 +8,9 @@
     "tooLong": "Too long"
   },
   "home": {
-    "tagline": "Your recipe book and cooking history, precise and permanent, shared with your household, usable from any AI.",
-    "start": "Get started"
+    "tagline": "Your recipes, your menus and your shopping list, shared with the people you love, right from your favourite AI assistant.",
+    "start": "Get started",
+    "worksWith": "Works with"
   },
   "signIn": {
     "title": "Sign in",

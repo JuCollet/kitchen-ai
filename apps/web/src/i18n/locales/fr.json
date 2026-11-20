@@ -8,8 +8,9 @@
     "tooLong": "Trop long"
   },
   "home": {
-    "tagline": "Ton livre de recettes et ton historique culinaire, précis et permanents, partagés avec ton foyer, utilisables depuis n'importe quelle IA.",
-    "start": "Commencer"
+    "tagline": "Vos recettes, vos menus et votre liste de courses, partagés avec vos proches, depuis votre assistant IA préféré.",
+    "start": "Commencer",
+    "worksWith": "Fonctionne avec"
   },
   "signIn": {
     "title": "Connexion",

@@ -16,7 +16,8 @@ describe('AppRoutes', () => {
       </MemoryRouter>,
     )
 
-    expect(screen.getByRole('heading', { name: 'Kitchen' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Kitchen AI' })).toBeInTheDocument()
+    expect(screen.getByText('Fonctionne avec')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Commencer' })).toHaveAttribute('href', '/sign-in')
   })
 
