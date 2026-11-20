@@ -74,5 +74,16 @@
     "notFound": "Deze boodschappenlijst bestaat niet, of hoort bij een ander huishouden.",
     "signInFirst": "Meld je aan om de boodschappenlijst van je huishouden te zien.",
     "signIn": "Aanmelden"
+  },
+  "connect": {
+    "title": "Verbind je AI",
+    "intro": "Voeg Kitchen toe als connector in je AI-assistent. Die vraagt je daarna om je aan te melden bij Kitchen en toegang tot je huishouden te geven.",
+    "claude": "Toevoegen aan Claude",
+    "claudeHint": "Claude opent het formulier al ingevuld: klik op Toevoegen en meld je aan bij Kitchen.",
+    "chatgpt": "Toevoegen aan ChatGPT",
+    "chatgptHint": "Het adres is gekopieerd. Klik op de pagina Plugins op +, dan op “Aangepaste MCP-server toevoegen”, en plak het adres. Afhankelijk van je abonnement is de optie mogelijk niet beschikbaar.",
+    "gemini": "Toevoegen aan Gemini",
+    "geminiHint": "Het adres is gekopieerd. Open in Gemini Instellingen, Verbonden apps, dan Een aangepaste app toevoegen, en plak het adres. Alleen beschikbaar voor sommige Gemini-accounts.",
+    "copyUrl": "MCP-URL kopiëren"
   }
 }

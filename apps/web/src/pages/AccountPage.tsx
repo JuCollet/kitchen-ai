@@ -17,6 +17,7 @@ import {
 import { passkeysSupported, registerPasskey } from '@/lib/passkeys'
 import { takePendingInvitation } from '@/lib/pendingInvitation'
 import { takeReturnPath } from '@/lib/returnAfterSignIn'
+import { ConnectAiCard } from './ConnectAiCard'
 import { PageShell } from './PageShell'
 
 export function AccountPage() {
@@ -71,6 +72,7 @@ export function AccountPage() {
       ) : (
         <CreateHouseholdCard onCreated={() => setVersion((current) => current + 1)} />
       )}
+      <ConnectAiCard />
       <HealthDataCard />
       <PasskeyCard />
       <Button variant="outline" onClick={() => void signOut()}>
