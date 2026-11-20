@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next'
 import { Link, useLocation, useParams } from 'react-router'
 import { api, ApiError } from '@/lib/api'
 import { saveReturnPath } from '@/lib/returnAfterSignIn'
-import { PageShell } from './PageShell'
+import { PageShell, SiteHeader } from './PageShell'
 
 /** Same rhythm as the widget: what other members check shows up within seconds. */
 const REFRESH_MS = 10_000
@@ -60,15 +60,18 @@ export function ShoppingListPage() {
   if (query.isError) return <ShoppingListError error={query.error} />
 
   return (
-    <main className="mx-auto min-h-svh max-w-md py-6 ksl-site">
-      <ShoppingListView
-        list={query.data}
-        t={listT}
-        locale={i18n.language}
-        notice={notice}
-        onToggle={(item, checked) => toggle.mutate({ item, checked })}
-      />
-    </main>
+    <div className="min-h-svh">
+      <SiteHeader />
+      <main className="mx-auto max-w-md py-6 ksl-site">
+        <ShoppingListView
+          list={query.data}
+          t={listT}
+          locale={i18n.language}
+          notice={notice}
+          onToggle={(item, checked) => toggle.mutate({ item, checked })}
+        />
+      </main>
+    </div>
   )
 }
 
