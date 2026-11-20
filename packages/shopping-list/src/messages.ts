@@ -27,7 +27,7 @@ const messages = {
   fr: {
     connecting: 'Connexion à Kitchen…',
     error: 'Impossible de joindre Kitchen.',
-    saveFailed: "La modification n'a pas été enregistrée. Réessaie.",
+    saveFailed: "La modification n'a pas été enregistrée. Réessayez.",
     remaining: (count: number) =>
       count === 1 ? '1 article restant' : `${count} articles restants`,
     allDone: 'Tout est acheté.',

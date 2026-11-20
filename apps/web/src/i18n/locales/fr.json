@@ -1,7 +1,7 @@
 {
   "common": {
     "loading": "Chargement…",
-    "error": "Une erreur est survenue. Réessaie."
+    "error": "Une erreur est survenue. Réessayez."
   },
   "validation": {
     "required": "Obligatoire",
@@ -14,17 +14,17 @@
   },
   "signIn": {
     "title": "Connexion",
-    "intro": "Ton compte Kitchen se crée avec Google. Tu pourras ensuite ajouter une passkey pour te connecter sans Google.",
+    "intro": "Votre compte Kitchen se crée avec Google. Vous pourrez ensuite ajouter une passkey pour vous connecter sans Google.",
     "google": "Continuer avec Google",
     "passkey": "Se connecter avec une passkey",
-    "failed": "La connexion a échoué. Réessaie.",
+    "failed": "La connexion a échoué. Réessayez.",
     "passkeyFailed": "La connexion par passkey a échoué."
   },
   "account": {
     "title": "Mon compte",
     "signedInAs": "Connecté en tant que {{name}} ({{email}})",
     "signOut": "Se déconnecter",
-    "noHousehold": "Tu ne fais encore partie d'aucun foyer. Crées-en un, ou demande un lien d'invitation à un membre.",
+    "noHousehold": "Vous ne faites encore partie d'aucun foyer. Créez-en un, ou demandez un lien d'invitation à un membre.",
     "householdName": "Nom du foyer",
     "createHousehold": "Créer le foyer",
     "household": "Foyer : {{name}}",
@@ -34,17 +34,17 @@
       "member": "membre"
     },
     "invite": "Inviter quelqu'un",
-    "inviteLink": "Envoie ce lien à la personne que tu invites. Il fonctionne une seule fois, jusqu'au {{date}}.",
+    "inviteLink": "Envoyez ce lien à la personne que vous invitez. Il fonctionne une seule fois, jusqu'au {{date}}.",
     "copy": "Copier",
     "copied": "Copié",
     "passkeyTitle": "Passkey",
-    "passkeyIntro": "Une passkey te permet de te connecter sur cet appareil sans Google.",
+    "passkeyIntro": "Une passkey vous permet de vous connecter sur cet appareil sans Google.",
     "addPasskey": "Ajouter une passkey",
-    "passkeyAdded": "Passkey ajoutée. Tu peux maintenant te connecter avec.",
+    "passkeyAdded": "Passkey ajoutée. Vous pouvez maintenant vous connecter avec.",
     "passkeyUnsupported": "Ce navigateur ne gère pas les passkeys.",
     "passkeyFailed": "La passkey n'a pas pu être ajoutée.",
     "healthDataTitle": "Allergies et intolérances",
-    "healthDataOff": "Kitchen n’enregistre pas vos allergies et intolérances. Si vous l’autorisez, elles sont visibles par les autres membres de votre foyer et par leurs IA, pour que les menus du foyer soient sans risque pour vous.",
+    "healthDataOff": "Kitchen n'enregistre pas vos allergies et intolérances. Si vous l'autorisez, elles sont visibles par les autres membres de votre foyer et par leurs IA, pour que les menus du foyer soient sans risque pour vous.",
     "healthDataOn": "Kitchen enregistre vos allergies et intolérances, et les partage avec les autres membres de votre foyer et leurs IA.",
     "allowHealthData": "Autoriser Kitchen à les enregistrer",
     "withdrawHealthData": "Retirer mon consentement et les effacer",
@@ -52,27 +52,27 @@
   },
   "join": {
     "title": "Rejoindre un foyer",
-    "intro": "Tu as été invité à rejoindre un foyer sur Kitchen.",
+    "intro": "Vous avez été invité à rejoindre un foyer sur Kitchen.",
     "signInFirst": "Se connecter pour accepter",
     "accept": "Rejoindre le foyer",
     "notFound": "Cette invitation est invalide, déjà utilisée ou expirée.",
-    "alreadyInHousehold": "Tu fais déjà partie d'un foyer."
+    "alreadyInHousehold": "Vous faites déjà partie d'un foyer."
   },
   "consent": {
     "title": "Connecter une IA",
-    "intro": "{{client}} demande l'accès à ton foyer Kitchen : profils, appareils, recettes, menus, listes de courses et garde-manger. Elle pourra les lire et les modifier en ton nom.",
+    "intro": "{{client}} demande l'accès à votre foyer Kitchen : profils, appareils, recettes, menus, listes de courses et garde-manger. Elle pourra les lire et les modifier en votre nom.",
     "destination": "L'accès sera donné à :",
-    "warning": "Continue uniquement si c'est toi qui ajoutes Kitchen à cette IA, maintenant.",
+    "warning": "Continuez uniquement si c'est vous qui ajoutez Kitchen à cette IA, maintenant.",
     "allow": "Autoriser",
     "deny": "Refuser",
-    "notFound": "Cette demande de connexion est invalide ou a expiré. Recommence depuis ton IA.",
-    "healthData": "J’autorise Kitchen à enregistrer mes allergies et intolérances. Ce sont des données de santé : elles seront visibles par les autres membres de mon foyer et par leurs IA, pour que les menus du foyer soient sans risque pour moi. Je peux retirer ce consentement à tout moment sur la page de mon compte, ce qui les efface.",
+    "notFound": "Cette demande de connexion est invalide ou a expiré. Recommencez depuis votre IA.",
+    "healthData": "J'autorise Kitchen à enregistrer mes allergies et intolérances. Ce sont des données de santé : elles seront visibles par les autres membres de mon foyer et par leurs IA, pour que les menus du foyer soient sans risque pour moi. Je peux retirer ce consentement à tout moment sur la page de mon compte, ce qui les efface.",
     "healthDataGiven": "Vous avez autorisé Kitchen à enregistrer vos allergies et intolérances. Vous pouvez retirer ce consentement sur la page de votre compte."
   },
   "shoppingList": {
     "title": "Liste de courses",
     "notFound": "Cette liste de courses n'existe pas, ou appartient à un autre foyer.",
-    "signInFirst": "Connecte-toi pour voir la liste de courses de ton foyer.",
+    "signInFirst": "Connectez-vous pour voir la liste de courses de votre foyer.",
     "signIn": "Se connecter"
   }
 }
