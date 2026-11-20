@@ -46,8 +46,8 @@
     "healthDataTitle": "Allergies et intolérances",
     "healthDataOff": "Kitchen n'enregistre pas vos allergies et intolérances. Si vous l'autorisez, elles sont visibles par les autres membres de votre foyer et par leurs IA, pour que les menus du foyer soient sans risque pour vous.",
     "healthDataOn": "Kitchen enregistre vos allergies et intolérances, et les partage avec les autres membres de votre foyer et leurs IA.",
-    "allowHealthData": "Autoriser Kitchen à les enregistrer",
-    "withdrawHealthData": "Retirer mon consentement et les effacer",
+    "allowHealthData": "Autoriser l'enregistrement",
+    "withdrawHealthData": "Retirer et effacer",
     "signOutFailed": "La déconnexion a échoué : vous êtes toujours connecté. Réessayez."
   },
   "join": {
