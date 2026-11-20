@@ -43,6 +43,14 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  /* Brand (logo red, page cream), from the design of the home page. */
+  --color-brand: #e31913;
+  --color-cream: #f2f1ea;
+  --color-ink: #1a1a1a;
+  /* Fonts of the home page design, self-hosted (@fontsource): no request to Google Fonts, which
+     would send visitors' IP addresses to Google. */
+  --font-display: 'Kiwi Maru', ui-serif, Georgia, serif;
+  --font-ui: 'Inter', ui-sans-serif, system-ui, sans-serif;
 }
 
 :root {
