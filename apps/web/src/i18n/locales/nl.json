@@ -15,7 +15,7 @@
   "signIn": {
     "title": "Aanmelden",
     "intro": "Je Kitchen-account wordt aangemaakt met Google. Daarna kun je een passkey toevoegen om je zonder Google aan te melden.",
-    "google": "Doorgaan met Google",
+    "google": "Aanmelden",
     "passkey": "Aanmelden met een passkey",
     "failed": "Aanmelden is mislukt. Probeer het opnieuw.",
     "passkeyFailed": "Aanmelden met een passkey is mislukt."

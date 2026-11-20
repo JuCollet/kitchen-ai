@@ -8,9 +8,9 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        // Kitchen's main action, as on the home page: white, red outline, red text.
+        // Kitchen's main action, as on the home page: white, red outline, red capitals.
         default:
-          "border-2 border-primary bg-white font-semibold text-primary hover:bg-primary hover:text-primary-foreground",
+          "border-2 border-primary bg-white font-bold uppercase tracking-[0.1em] text-primary hover:bg-primary hover:text-primary-foreground",
         destructive:
           "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:bg-destructive/60 dark:focus-visible:ring-destructive/40",
         outline:
@@ -19,10 +19,11 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost:
           "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
-        link: "text-primary underline-offset-4 hover:underline",
+        // A secondary action under the main button: plain text, no frame, not underlined.
+        link: "text-[15px]! font-normal text-foreground hover:text-primary",
       },
       size: {
-        default: "h-10 rounded-xl px-5 py-2 has-[>svg]:px-4",
+        default: "h-12 rounded-xl px-8 py-2 text-base has-[>svg]:px-6",
         xs: "h-6 gap-1 rounded-md px-2 text-xs has-[>svg]:px-1.5 [&_svg:not([class*='size-'])]:size-3",
         sm: "h-8 gap-1.5 rounded-md px-3 has-[>svg]:px-2.5",
         lg: "h-11 rounded-xl px-6 has-[>svg]:px-4",

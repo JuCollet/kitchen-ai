@@ -56,7 +56,7 @@
 :root {
   /* Kitchen's palette (home page design): cream page, ink text, the logo's red for actions.
      Light only: the cream is part of Kitchen's identity, there is no dark theme. */
-  --radius: 0.75rem;
+  --radius: 0.5rem;
   --background: #f2f1ea;
   --foreground: #1a1a1a;
   --card: #ffffff;

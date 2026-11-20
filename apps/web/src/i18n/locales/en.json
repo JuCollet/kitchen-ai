@@ -15,7 +15,7 @@
   "signIn": {
     "title": "Sign in",
     "intro": "Your Kitchen account is created with Google. You can then add a passkey to sign in without Google.",
-    "google": "Continue with Google",
+    "google": "Sign in",
     "passkey": "Sign in with a passkey",
     "failed": "Sign-in failed. Please try again.",
     "passkeyFailed": "Passkey sign-in failed."

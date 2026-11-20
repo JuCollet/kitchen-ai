@@ -31,7 +31,16 @@ export function SignInPage() {
   }
 
   return (
-    <PageShell title={t('signIn.title')}>
+    <PageShell
+      title={t('signIn.title')}
+      footer={
+        passkeysSupported() && (
+          <Button variant="link" onClick={() => void passkeySignIn()}>
+            {t('signIn.passkey')}
+          </Button>
+        )
+      }
+    >
       <p className="text-muted-foreground">{t('signIn.intro')}</p>
       {searchParams.has('error') && (
         <Alert variant="destructive">
@@ -42,11 +51,6 @@ export function SignInPage() {
       <Button asChild>
         <a href="/oauth2/authorization/google">{t('signIn.google')}</a>
       </Button>
-      {passkeysSupported() && (
-        <Button variant="outline" onClick={() => void passkeySignIn()}>
-          {t('signIn.passkey')}
-        </Button>
-      )}
       {passkeyFailed && (
         <Alert variant="destructive">
           <AlertDescription>{t('signIn.passkeyFailed')}</AlertDescription>
