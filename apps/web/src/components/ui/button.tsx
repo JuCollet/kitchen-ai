@@ -19,13 +19,18 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost:
           "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
+        // "Add to …" buttons in the AI apps' own colours (secondary: small, normal case).
+        claude: "bg-[#d97757] font-semibold text-white hover:bg-[#c2643f]",
+        chatgpt: "bg-black font-semibold text-white hover:bg-neutral-800",
+        gemini:
+          "bg-linear-to-r from-[#1ba1e3] via-[#9b72cb] to-[#d96570] font-semibold text-white hover:brightness-110",
         // A secondary action under the main button: plain text, no frame, not underlined.
         link: "text-[15px]! font-normal text-foreground hover:text-primary",
       },
       size: {
         default: "h-12 rounded-xl px-8 py-2 text-base has-[>svg]:px-6",
         xs: "h-6 gap-1 rounded-md px-2 text-xs has-[>svg]:px-1.5 [&_svg:not([class*='size-'])]:size-3",
-        sm: "h-8 gap-1.5 rounded-md px-3 has-[>svg]:px-2.5",
+        sm: "h-9 gap-2 rounded-lg px-4 has-[>svg]:px-3.5",
         lg: "h-11 rounded-xl px-6 has-[>svg]:px-4",
         icon: "size-9",
         "icon-xs": "size-6 rounded-md [&_svg:not([class*='size-'])]:size-3",

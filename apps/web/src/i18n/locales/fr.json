@@ -74,5 +74,16 @@
     "notFound": "Cette liste de courses n'existe pas, ou appartient à un autre foyer.",
     "signInFirst": "Connectez-vous pour voir la liste de courses de votre foyer.",
     "signIn": "Se connecter"
+  },
+  "connect": {
+    "title": "Connecter votre IA",
+    "intro": "Ajoutez Kitchen comme connecteur dans votre assistant IA. Il vous demandera ensuite de vous connecter à Kitchen et d'autoriser l'accès à votre foyer.",
+    "claude": "Ajouter à Claude",
+    "claudeHint": "Claude ouvre le formulaire déjà rempli : cliquez sur Ajouter, puis connectez-vous à Kitchen.",
+    "chatgpt": "Ajouter à ChatGPT",
+    "chatgptHint": "L'adresse est copiée. Sur la page Plugins, cliquez sur +, puis « Ajouter un serveur MCP personnalisé », et collez l'adresse. Selon votre abonnement, l'option peut ne pas être disponible.",
+    "gemini": "Ajouter à Gemini",
+    "geminiHint": "L'adresse est copiée. Dans Gemini, ouvrez Paramètres, Applications connectées, puis Ajouter une application personnalisée, et collez l'adresse. Réservé à certains comptes Gemini.",
+    "copyUrl": "Copier l'URL MCP"
   }
 }

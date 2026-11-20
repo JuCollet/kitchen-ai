@@ -74,5 +74,16 @@
     "notFound": "This shopping list does not exist, or belongs to another household.",
     "signInFirst": "Sign in to see your household's shopping list.",
     "signIn": "Sign in"
+  },
+  "connect": {
+    "title": "Connect your AI",
+    "intro": "Add Kitchen as a connector in your AI assistant. It will then ask you to sign in to Kitchen and to allow access to your household.",
+    "claude": "Add to Claude",
+    "claudeHint": "Claude opens the form already filled in: click Add, then sign in to Kitchen.",
+    "chatgpt": "Add to ChatGPT",
+    "chatgptHint": "The address is copied. On the Plugins page, click +, then “Add custom MCP server”, and paste the address. Depending on your plan, the option may not be available.",
+    "gemini": "Add to Gemini",
+    "geminiHint": "The address is copied. In Gemini, open Settings, Connected apps, then Add a custom app, and paste the address. Only available for some Gemini accounts.",
+    "copyUrl": "Copy MCP URL"
   }
 }

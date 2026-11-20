@@ -278,7 +278,7 @@ The message a prompt returns (`prompts/get`) is written in the person's language
 | `/sign-in` | public | Google, passkey; also used by the AIs' OAuth flow |
 | `/consent` | signed in | Authorising an AI; consent for health data (unticked box, phase 6); acceptance of the privacy policy at first sign-in; invitation to subscribe to the newsletter at sign-up (phase 12) |
 | `/join#<token>` | public then signed in | Join a household by invitation. The token is in the URL fragment, which browsers never send to a server, so it cannot end up in access logs |
-| `/account` | signed in | My data, my household and its members, invite, connected AIs (revocation), passkeys, JSON export, account deletion (export, deletion and revocation in phase 14, the page's final layout in phase 12) |
+| `/account` | signed in | My data, my household and its members, invite, connected AIs (revocation), passkeys, JSON export, account deletion (export, deletion and revocation in phase 14, the page's final layout in phase 12); "Connect your AI" card: "Add to Claude" (link prefilling Claude's custom connector dialog: `claude.ai/customize/connectors?modal=add-custom-connector&connectorName=…&connectorUrl=…`, not in Anthropic's official docs, checked 20 November 2026), "Add to ChatGPT" and "Add to Gemini" (small secondary buttons in each app's colours, with its logo; no prefill link exists for these two: the URL is copied and `chatgpt.com/plugins` or Gemini opened, with the remaining steps), then a small outlined "Copy MCP URL" button for other clients |
 | `/list/:id` | household member | Shopping list fallback page |
 | `/privacy`, `/terms` | public | Legal texts |
 
